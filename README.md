@@ -8,7 +8,7 @@ JLJP was written by [Doriano Brogioli](https://sites.google.com/site/dbrogioli/)
 
 ## Quickstart
 
-* Install Java and the [JSci package](http://jsci.sourceforge.net/)
+* Install [Java](https://www.java.com/en/download/)
 * Run the jar to launch the graphical interface
 * Write `Na` in the "Ion name" text field
 * Press the "Add" button
