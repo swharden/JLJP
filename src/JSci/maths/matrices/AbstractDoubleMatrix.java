@@ -229,7 +229,7 @@ public abstract class AbstractDoubleMatrix extends Matrix {
         /**
         * Returns the multiplication of this matrix by a scalar.
         */
-        public final Module.Member scalarMultiply(Ring.Member x) {
+        public final JSci.maths.algebras.Module.Member scalarMultiply(Ring.Member x) {
                 if(x instanceof Number) {
                         return scalarMultiply(((Number)x).doubleValue());
                 } else {
