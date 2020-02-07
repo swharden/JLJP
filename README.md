@@ -11,10 +11,10 @@ JLJP was written by [Doriano Brogioli](https://sites.google.com/site/dbrogioli/)
 * Install the [Java Platform (JDK)](https://www.oracle.com/technetwork/java/javase/downloads/)
 * Compile with `javac -nowarn Jljp.java`
 * Launch the GUI with `java Jljp.class`
-* Add ions named `Zn`, `K`, and `Cl`
-* Set the c0 and cL values for each ion to match those in the screenshot
-  * Click the radio buttons in different combinations to make the fields editable
-  * When finished, ensure the "X" and "last" buttons are clicked to match the screenshot
+* Add ions to match those in the screenshot
+  * Type the name of an ion (without numbers) and hit "add"
+  * Immediately after adding an ion set its concentrations (c0 and cL)
+* When all ions are added, click the "X" and "last" buttons to match the screenshot
 * Click "Calculate" and the liquid junction potential will be displayed
 
 ## Notes about Adding Ions
