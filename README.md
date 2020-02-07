@@ -7,7 +7,6 @@ JLJP is a free and open-source Java application which calculates liquid junction
 JLJP was written by [Doriano Brogioli](https://sites.google.com/site/dbrogioli/) and originally released on [SourceForge](http://jljp.sourceforge.net/) in 2013. Detailed theory underlying this application is documented in _A new open source software for the calculation of the liquid junction potential between two solutions according to the stationary Nernst-Planck equation_ ([arXiv:1403.3640](https://arxiv.org/abs/1403.3640)). At the time of its creation JLJP was the only open source LJP calculator freely available on the Internet which did not limit the number of ions used in the calculation. Source code and documentation was repackaged for GitHub by [Scott W Harden](https://github.com/swharden) in 2020.
 
 ## Quickstart
-
 * Install the [Java Platform (JDK)](https://www.oracle.com/technetwork/java/javase/downloads/)
 * Compile with `javac -nowarn Jljp.java`
 * Launch the GUI with `java Jljp.class`
@@ -16,6 +15,8 @@ JLJP was written by [Doriano Brogioli](https://sites.google.com/site/dbrogioli/)
   * Immediately after adding an ion set its concentrations (c0 and cL)
 * When all ions are added, click the "X" and "last" buttons to match the screenshot
 * Click "Calculate" and the liquid junction potential will be displayed
+
+A precompiled JAR file is also available: http://jljp.sourceforge.net/Jljp.jar
 
 ## Notes about Adding Ions
 
