@@ -19,6 +19,7 @@ cd src
 del *.class
 javac -nowarn Jljp.java
 pause
+java Jljp.java
 exit
 
 :ERROR_NO_JAVA
