@@ -20,6 +20,7 @@ public class Jljp extends JFrame {
 
 	public static void main(String[] args) {
 		Jljp j = new Jljp();
+		j.setTitle("JLJP by Doriano Brogioli");
 		j.setVisible(true);
 	}
 
