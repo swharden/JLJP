@@ -2,7 +2,7 @@
 
 JLJP is a free and open-source Java application which calculates liquid junction potential (LJP) from an arbitrary number of ions. JLJP also allows the user to define activity as a function of the ion concentration.
 
-![](dev/screenshots/1.jpg)
+![](dev/screenshots/2.jpg)
 
 JLJP was written by [Doriano Brogioli](https://sites.google.com/site/dbrogioli/) and originally released on [SourceForge](http://jljp.sourceforge.net/) in 2013. Detailed theory underlying this application is documented in _A new open source software for the calculation of the liquid junction potential between two solutions according to the stationary Nernst-Planck equation_ ([arXiv:1403.3640](https://arxiv.org/abs/1403.3640)). At the time of its creation JLJP was the only open source LJP calculator freely available on the Internet which did not limit the number of ions used in the calculation. Source code and documentation was repackaged for GitHub by [Scott W Harden](https://github.com/swharden) in 2020.
 
@@ -11,19 +11,12 @@ JLJP was written by [Doriano Brogioli](https://sites.google.com/site/dbrogioli/)
 * Install the [Java Platform (JDK)](https://www.oracle.com/technetwork/java/javase/downloads/)
 * Compile with `javac -nowarn Jljp.java`
 * Launch the GUI with `java Jljp.class`
-* Run the jar to launch the graphical interface
-* Write `Na` in the "Ion name" text field
-* Press the "Add" button
-* Write `Cl` in the "Ion name" text field
-* Press the "Add" button
-* Check the radio button under the column "X" in the row "Na"
-* Check the radio button under the column "Last" in the row "Cl"
-* Write `1` in the column "c0" of the row "Na"
-* Write `3` in the column "cL" of the row "Na"
-* Press "Calculate"
-* Voltage across the liquid junction will be displayed
+* Add ions named `Zn`, `K`, and `Cl`
+* Click the buttons under the "X" and "Last" columns as necessary to edit the "c0" and "cL" values to match those in the screenshot
+* Click the buttons under the "X" and "Last" to match the screenshot
+* Click "Calculate" the liquid junction potential will be displayed
 
-## Adding Ions
+## Notes about Adding Ions
 
 * In the graphical panel put the name of the ion in the text field and press "Add"
 * Use names like `Na` and `Cl` (do not write charge as a number)
