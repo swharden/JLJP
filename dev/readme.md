@@ -8,6 +8,6 @@ _Dec 27, 2013_
 
 ### JLJP 1.0.0
 
-_Dec 27, 2013_
+_Dec 21, 2013_
 
 * Requires that the use enters the ion fluxes. Absolutely stable calculation.
