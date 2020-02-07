@@ -353,7 +353,7 @@ public final class Complex extends Object implements Field.Member, CStarAlgebra.
         /**
         * Returns the multiplication of this number by a complex scalar.
         */
-        public Module.Member scalarMultiply(final Ring.Member x) {
+        public JSci.maths.algebras.Module.Member scalarMultiply(final Ring.Member x) {
                 return (Complex)multiply(x);
         }
         /**

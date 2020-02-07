@@ -267,7 +267,7 @@ public abstract class AbstractComplexMatrix extends Matrix {
         /**
         * Returns the multiplication of this matrix by a scalar.
         */
-        public final Module.Member scalarMultiply(Ring.Member x) {
+        public final JSci.maths.algebras.Module.Member scalarMultiply(Ring.Member x) {
                 if(x instanceof Complex)
                         return scalarMultiply((Complex)x);
                 else if(x instanceof MathDouble)
