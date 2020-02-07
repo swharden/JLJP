@@ -8,7 +8,7 @@ JLJP was written by [Doriano Brogioli](https://sites.google.com/site/dbrogioli/)
 
 ## Quickstart
 
-* Install the [Java Platform (JDK)](https://www.oracle.com/technetwork/java/javase/downloads/)
+* Install the [Java Platform (JDK)](https://www.oracle.com/technetwork/java/javase/downloads/) (and remove all other Java installations)
 * Run the jar to launch the graphical interface
 * Write `Na` in the "Ion name" text field
 * Press the "Add" button
