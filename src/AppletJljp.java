@@ -10,12 +10,11 @@ import java.text.*;
 
 public class AppletJljp extends Applet {
 
-    public void init() { 
-	setSize(1000,600);
-        IonSetPanel is=new IonSetPanel();
-        LJPPanel p=new LJPPanel(is,this);
+    public void init() {
+        setSize(1000, 600);
+        IonSetPanel is = new IonSetPanel();
+        LJPPanel p = new LJPPanel(is, this);
         add(p);
     }
 
-  
 }

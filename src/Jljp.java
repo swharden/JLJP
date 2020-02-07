@@ -10,18 +10,17 @@ import java.text.*;
 
 public class Jljp extends JFrame {
 
-    public Jljp() {
-	setSize(1000,600);
-	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	IonSetPanel is=new IonSetPanel();
-	LJPPanel p=new LJPPanel(is,null);
-	getContentPane().add(p);
-    }
+	public Jljp() {
+		setSize(1000, 600);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		IonSetPanel is = new IonSetPanel();
+		LJPPanel p = new LJPPanel(is, null);
+		getContentPane().add(p);
+	}
 
-    public static void main(String [] args) {
-	Jljp j=new Jljp();
-	j.setVisible(true);
-    }
-
+	public static void main(String[] args) {
+		Jljp j = new Jljp();
+		j.setVisible(true);
+	}
 
 }
