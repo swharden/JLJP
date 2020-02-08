@@ -3,14 +3,10 @@
 
 @echo off
 
-echo ### DELETING OLD BINARIES ###
 del *.class /f /q /s
 
-echo ### CONFIRUGING CLASS PATH ###
-set CLASSPATH=%CLASSPATH%;junit-4.13.jar;hamcrest-core-1.3.jar;
+set CLASSPATH=%CLASSPATH%;junit-4.13.jar;hamcrest-core-1.3.jar;..\src
 
-echo ### BUILDING TESTS ###
 javac CalculationTest.java
 
-echo ### RUNNING TESTS ###
-java org.junit.runner.JUnitCore CalculationTest
+if exist CalculationTest.class java org.junit.runner.JUnitCore CalculationTest
