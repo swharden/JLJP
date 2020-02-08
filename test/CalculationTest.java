@@ -5,7 +5,6 @@ import java.util.*;
 
 public class CalculationTest {
 
-    private static final double mMperM = 1000.0;
     private static final double mVperV = 1000.0;
     private static final boolean printLog = false;
 
@@ -37,16 +36,16 @@ public class CalculationTest {
 
         // Define ions and conditions (charge and cdadc come from the table)
         Ion Zn = new Ion("Zn");
-        Zn.setC0(9.0 * Ion.Nav * mMperM);
-        Zn.setCL(0.0284 * Ion.Nav * mMperM);
+        Zn.setC0(9.0);
+        Zn.setCL(0.0284);
 
         Ion K = new Ion("K");
-        K.setC0(0.0 * Ion.Nav * mMperM);
-        K.setCL(3.0 * Ion.Nav * mMperM);
+        K.setC0(0.0);
+        K.setCL(3.0);
 
         Ion Cl = new Ion("Cl");
-        Cl.setC0(18.0 * Ion.Nav * mMperM);
-        Cl.setCL(3.0568 * Ion.Nav * mMperM);
+        Cl.setC0(18.0);
+        Cl.setCL(3.0568);
 
         // Load ions in order (the last 2 become "X" and "Last")
         IonSet isss = new IonSet();
