@@ -25,37 +25,42 @@ public class LJPPanel extends JPanel {
 		is = isss;
 		toBeRepainted = c;
 
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setLayout(new GridBagLayout());
+
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.weightx = 1;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
 
 		JPanel nip = new JPanel();
 		JPanel nipin = new JPanel();
-		nip.add(new JLabel("Ion name: "));
+		nip.add(new JLabel("Name: "));
 		ni = new JTextField();
 		ni.setColumns(6);
 		nip.add(ni);
 		nb = new JButton("Add");
 		nip.add(nb);
-		nip.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+		nip.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Add Ion"));
 		nipin.add(nip);
-		add(nipin);
+		nipin.setMaximumSize(nipin.getPreferredSize());
+		add(nipin, gbc);
 
 		JPanel vip = new JPanel();
 		JPanel vipin = new JPanel();
 		calc = new JButton("Calculate");
 		vip.add(calc);
-		vip.add(new JLabel(" Voltage (mV): "));
 		vi = new JTextField();
 		vi.setColumns(6);
 		vi.setEditable(false);
 		vip.add(vi);
-		vip.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+		vip.add(new JLabel("mV"));
+		vip.setBorder(
+				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Liquid Junction Potential"));
 		vipin.add(vip);
-		add(vipin);
+		vipin.setMaximumSize(vipin.getPreferredSize());
+		add(vipin, gbc);
 
-		JPanel errP = new JPanel();
 		JPanel errPin = new JPanel();
-		errP.add(new JLabel("Messages:"));
-
 		err = new JTextArea();
 		err.setLineWrap(true);
 		err.setWrapStyleWord(true);
@@ -63,15 +68,16 @@ public class LJPPanel extends JPanel {
 		JScrollPane errScroll = new JScrollPane(err);
 		errScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		errScroll.setPreferredSize(new Dimension(250, 50));
-
+		JPanel errP = new JPanel();
 		errP.add(errScroll);
-		errP.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+		errP.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Error Messages"));
 		errPin.add(errP);
-		add(errPin);
+		errPin.setMaximumSize(errPin.getPreferredSize());
+		add(errPin, gbc);
 
 		JPanel isin = new JPanel();
 		isin.add(is);
-		add(isin);
+		add(isss, gbc);
 
 		class Calculation implements Runnable {
 			public void run() {
