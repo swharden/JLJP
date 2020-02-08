@@ -27,13 +27,17 @@ public class IonPanel extends JPanel {
      */
     public IonPanel(String nm) {
 
+        DecimalFormat decFormatSingleDigit = new DecimalFormat("0");
+        DecimalFormat decFormatScientific = new DecimalFormat("0.###E0");
+        DecimalFormat decFormatConcentration = new DecimalFormat("0.00000");
+
         name = new JTextField();
-        charge = new JFormattedTextField(new DecimalFormat("0.###E0"));
-        mu = new JFormattedTextField(new DecimalFormat("0.###E0"));
+        charge = new JFormattedTextField(decFormatSingleDigit);
+        mu = new JFormattedTextField(decFormatScientific);
         cdadc = new JTextField();
-        phi = new JFormattedTextField(new DecimalFormat("0.###E0"));
-        c0 = new JFormattedTextField(new DecimalFormat("0.###E0"));
-        cL = new JFormattedTextField(new DecimalFormat("0.###E0"));
+        phi = new JFormattedTextField(decFormatScientific);
+        c0 = new JFormattedTextField(decFormatConcentration);
+        cL = new JFormattedTextField(decFormatConcentration);
 
         name.setColumns(6);
         charge.setColumns(6);
@@ -66,13 +70,14 @@ public class IonPanel extends JPanel {
      * Copies the parameters from the Ion to the graphical JPanel.
      */
     public void updatePanelFromIon(Ion i) {
+        //var decFormat = new DecimalFormat("0.00000");
         name.setText(i.getName());
-        charge.setValue(new Double(i.getCharge()));
-        mu.setValue(new Double(i.getMu()));
+        charge.setValue(i.getCharge());
+        mu.setValue(i.getMu());
         cdadc.setText(i.getCdadc());
-        phi.setValue(new Double(i.getPhi() / 1000.0 / Nav));
-        c0.setValue(new Double(i.getC0() / 1000.0 / Nav));
-        cL.setValue(new Double(i.getCL() / 1000.0 / Nav));
+        phi.setValue(i.getPhi() / 1000.0 / Nav);
+        c0.setValue(i.getC0() / 1000.0 / Nav);
+        cL.setValue(i.getCL() / 1000.0 / Nav);
         phi.setEditable(false);
         revalidate();
     }
