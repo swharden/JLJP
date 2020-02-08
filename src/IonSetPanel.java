@@ -1,5 +1,7 @@
 import java.io.*;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.*;
@@ -40,27 +42,28 @@ public class IonSetPanel extends JPanel {
 		JPanel titles = new JPanel();
 		titles.setLayout(new GridLayout(2, 10));
 
-		titles.add(new JLabel("Name"));
-		titles.add(new JLabel("Charge"));
+		titles.add(new JLabel("Ion"));
+		titles.add(new JLabel(""));
 		titles.add(new JLabel("Mobility"));
-		titles.add(new JLabel("c d ln a/dc"));
-		titles.add(new JLabel("phi"));
+		titles.add(new JLabel(""));
+		titles.add(new JLabel("Flux"));
 		titles.add(new JLabel("c0"));
 		titles.add(new JLabel("cL"));
 		titles.add(new JLabel("X"));
 		titles.add(new JLabel("Last"));
 		titles.add(new JLabel(""));
 
-		titles.add(new JLabel("(e.g. Na)"));
-		titles.add(new JLabel("(e.g. 2)"));
-		titles.add(new JLabel("m/s / N"));
-		titles.add(new JLabel("(number)"));
-		titles.add(new JLabel("(~ cL-c0)"));
+		titles.add(new JLabel("Name"));
+		titles.add(new JLabel("Charge"));
+		titles.add(new JLabel("(m/s / N)"));
+		titles.add(new JLabel("cdadc"));
+		titles.add(new JLabel("(frac)"));
 		titles.add(new JLabel("(M)"));
 		titles.add(new JLabel("(M)"));
 		titles.add(new JLabel(""));
 		titles.add(new JLabel(""));
 		titles.add(new JLabel(""));
+
 		add(titles);
 	}
 
@@ -94,6 +97,7 @@ public class IonSetPanel extends JPanel {
 		i.isX.addActionListener(new UpdateEditableActionListener());
 		i.isLast.addActionListener(new UpdateEditableActionListener());
 		add(i);
+		i.setBorder(new EmptyBorder(5, 0, 0, 0));
 		list.add(i);
 		i.remove.addActionListener(new RemoveActionListener(i));
 		repaint();
