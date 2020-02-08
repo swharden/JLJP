@@ -5,10 +5,22 @@
 
 public class Ion {
 
-	public static final double KT = 1.3806488e-23 * (25.0 + 273.15);
-	public static final double e = 1.6e-19;
-	public static final double Nav = 6.02e23;
+	public static final double zeroCinK = 273.15;
+	public static final double temperatureC = 25.0; // TODO: let user set this
+
+	// Boltzmann constant = 1.38064852e-23 (m^2 * kg) / (s^2 * K)
+	public static final double boltzmann = 1.3806488e-23;
+	public static final double KT = boltzmann * (temperatureC + zeroCinK); 
+
+	// Elementary charge = 1.602176634×10−19 (cm * g * s)
+	public static final double e = 1.6e-19; // TODO: use more precision
+
+	// Avogadro constant = 6.02214076e23 (no units)
+	public static final double Nav = 6.02e23; // TODO: use more precision
+
+	// Vacuum permittivity = 8.8541878128e-12 (F / m)
 	public static final double epsilon = 8.854187817e-12 * 80.1;
+	// What is the 80.1? It may not matter because epsilon is never used
 
 	private String name;
 	private int charge;
@@ -28,6 +40,7 @@ public class Ion {
 
 		charge = 1;
 
+		// TODO: why is this the default?
 		double defaultMu = 73.48e-4 / Nav / e / e;
 		mu = defaultMu;
 
