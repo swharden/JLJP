@@ -27,7 +27,9 @@ public class Ion {
 		name = n;
 
 		charge = 1;
-		mu = 73.48e-4 / Nav / e / e;
+
+		double defaultMu = 73.48e-4 / Nav / e / e;
+		mu = defaultMu;
 
 		if (name.equalsIgnoreCase("Ag")) {
 			charge = +1;
