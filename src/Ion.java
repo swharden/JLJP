@@ -5,10 +5,10 @@
 
 public class Ion {
 
-	private static final double KT = 1.3806488e-23 * (25.0 + 273.15);
-	private static final double e = 1.6e-19;
-	private static final double Nav = 6.02e23;
-	private static final double epsilon = 8.854187817e-12 * 80.1;
+	public static final double KT = 1.3806488e-23 * (25.0 + 273.15);
+	public static final double e = 1.6e-19;
+	public static final double Nav = 6.02e23;
+	public static final double epsilon = 8.854187817e-12 * 80.1;
 
 	private String name;
 	private int charge;
