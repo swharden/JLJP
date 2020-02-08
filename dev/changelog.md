@@ -1,5 +1,12 @@
 # Changelog
 
+### JLJP 2.0.1
+
+_Feb 7, 2020_
+* ion input is now case-insensitive
+* concentration textboxes show decimal (not scientific) notation
+* layout and padding adjustments
+
 ### JLJP 2.0.0
 
 _Dec 27, 2013_
