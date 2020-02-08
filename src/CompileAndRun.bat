@@ -1,13 +1,5 @@
-:: DELETE OLD BINARIES
+:: Javac.exe and Java.exe must both be in your system path.
+:: Get these from https://www.oracle.com/technetwork/java/javase/downloads/index.html
 del *.class /f /q /s
-
-:: COMPILE
-:: get Javac.exe from a Java Platform JDK (https://www.oracle.com/technetwork/java/javase/downloads/index.html)
-:: the path to Javac.exe must be in your system PATH
 javac -nowarn Jljp.java
-
-:: RUN
-:: the path to Java.exe must be in your system PATH
 java Jljp
-
-pause
