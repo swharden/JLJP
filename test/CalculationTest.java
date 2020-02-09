@@ -35,14 +35,10 @@ public class CalculationTest {
     public void test_ljpMath_exampleFromScreenshot() throws Exception {
         /* this test came from screenshot on JLJP website */
 
-        Ion Zn = new Ion("Zn", 9, 0.0284);
-        Ion K = new Ion("K", 0, 3);
-        Ion Cl = new Ion("Cl", 18, 3.0568);
-
         IonSet isss = new IonSet();
-        isss.add(Zn);
-        isss.add(K); // second from last is "X"
-        isss.add(Cl); // last becomes "last"
+        isss.add(new Ion("Zn", 9, 0.0284));
+        isss.add(new Ion("K", 0, 3)); // second from last is "X"
+        isss.add(new Ion("Cl", 18, 3.0568)); // last becomes "last"
 
         double ljpVolts = isss.calculate(null);
         double ljpMillivolts = ljpVolts * mVperV;
