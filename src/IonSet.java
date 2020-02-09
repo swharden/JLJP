@@ -30,6 +30,14 @@ public class IonSet {
 		list = new ArrayList<Ion>();
 	}
 
+	public String getDescription() {
+		String msg = "";
+		for (Ion ion : list) {
+			msg += ion.getDescription() + "\n";
+		}
+		return msg.trim();
+	}
+
 	/**
 	 * Adds an Ion to the IonSet. The last two Ion s have particular properties: are
 	 * the "X" and "Last" Ion s.

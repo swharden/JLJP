@@ -570,7 +570,19 @@ public class Ion {
 	}
 
 	public String toString() {
+		// DONT MODIFY THIS because string-parsing calculations depend on it
 		return name;
+	}
+
+	public String getDescription() {
+		String msg = "";
+		msg += String.format("Ion %s: ", name);
+		msg += String.format("c0: %f, ", c0);
+		msg += String.format("cL: %f, ", cL);
+		msg += String.format("charge: %d, ", charge);
+		msg += String.format("mu: %f, ", mu);
+		msg += String.format("cdadc: %s", cdadc);
+		return(msg);
 	}
 
 	/**
