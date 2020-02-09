@@ -3,6 +3,8 @@
 
 @echo off
 
+del *.class /f /q /s
+
 set CLASSPATH=%CLASSPATH%;junit-4.13.jar;hamcrest-core-1.3.jar;..\src
 
 javac CalculationTest.java
