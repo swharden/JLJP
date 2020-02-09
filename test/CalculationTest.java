@@ -115,13 +115,8 @@ public class CalculationTest {
 
             double ljp_V = isss.calculate(null);
             double ljp_mV = ljp_V * mVperV;
-
-            // if (printLog)
             System.out.println(ljp_mV);
         }
 
-        // double expected_mV = -20.82;
-        // double allowableDifference_mV = .01;
-        // assertEquals(ljp_mV, expected_mV, allowableDifference_mV);
     }
 }
