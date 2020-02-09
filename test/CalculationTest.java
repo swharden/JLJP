@@ -32,34 +32,23 @@ public class CalculationTest {
     }
 
     @Test
-    public void test_ljpMath_sampleCalculation1() throws Exception {
+    public void test_ljpMath_exampleFromScreenshot() throws Exception {
+        /* this test came from screenshot on JLJP website */
 
-        // Define ions and conditions (charge and cdadc come from the table)
-        Ion Zn = new Ion("Zn");
-        Zn.setC0(9.0);
-        Zn.setCL(0.0284);
+        Ion Zn = new Ion("Zn", 9, 0.0284);
+        Ion K = new Ion("K", 0, 3);
+        Ion Cl = new Ion("Cl", 18, 3.0568);
 
-        Ion K = new Ion("K");
-        K.setC0(0.0);
-        K.setCL(3.0);
-
-        Ion Cl = new Ion("Cl");
-        Cl.setC0(18.0);
-        Cl.setCL(3.0568);
-
-        // Load ions in order (the last 2 become "X" and "Last")
         IonSet isss = new IonSet();
         isss.add(Zn);
-        isss.add(K);
-        isss.add(Cl);
+        isss.add(K); // second from last is "X"
+        isss.add(Cl); // last becomes "last"
 
-        // calculate LJP
         double ljpVolts = isss.calculate(null);
         double ljpMillivolts = ljpVolts * mVperV;
         if (printLog)
             System.out.println(String.format("LJP = %f mV", ljpMillivolts));
 
-        // verify LJP
         double expectedMillivolts = -20.823125;
         double decimalsOfPrecision = 5;
         assertEquals(ljpMillivolts, expectedMillivolts, decimalsOfPrecision);
