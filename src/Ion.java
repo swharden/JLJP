@@ -10,7 +10,7 @@ public class Ion {
 
 	// Boltzmann constant = 1.38064852e-23 (m^2 * kg) / (s^2 * K)
 	public static final double boltzmann = 1.3806488e-23;
-	public static final double KT = boltzmann * (temperatureC + zeroCinK); 
+	public static final double KT = boltzmann * (temperatureC + zeroCinK);
 
 	// Elementary charge = 1.602176634×10−19 (cm * g * s)
 	public static final double e = 1.6e-19; // TODO: use more precision
@@ -35,14 +35,27 @@ public class Ion {
 	 * 
 	 * @param n the name.
 	 */
+	public Ion(String n, double c0, double cL) {
+		name = n;
+		cdadc = "1.0";
+		phi = 0.0;
+		this.c0 = c0;
+		this.cL = cL;
+		updateMuAndChargeFromTable();
+	}
+
 	public Ion(String n) {
 		name = n;
-
 		charge = 1;
+		cdadc = "1.0";
+		phi = 0.0;
+		c0 = 0.0;
+		cL = 0.0;
+		mu = 73.48e-4 / Nav / e / e; // TODO: why is this the default?
+		updateMuAndChargeFromTable();
+	}
 
-		// TODO: why is this the default?
-		double defaultMu = 73.48e-4 / Nav / e / e;
-		mu = defaultMu;
+	private void updateMuAndChargeFromTable() {
 
 		if (name.equalsIgnoreCase("Ag")) {
 			charge = +1;
@@ -432,11 +445,6 @@ public class Ion {
 			charge = +2;
 			mu = 1.71304e+11;
 		}
-
-		cdadc = "1.0";
-		phi = 0.0;
-		c0 = 0.0;
-		cL = 0.0;
 	}
 
 	/**
