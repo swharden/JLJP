@@ -1,13 +1,18 @@
 # JLJP
 
-JLJP is a free and open-source Java application which calculates liquid junction potential (LJP) from an arbitrary number of ions. JLJP also allows the user to define activity as a function of the ion concentration.
+JLJP is a free and open-source Java application which calculates liquid junction potential (LJP) from an arbitrary number of ions. JLJP also allows the user to define ion activity as a function of concentration.
 
 ![](dev/screenshots/3.JPG)
 
-JLJP was written by [Doriano Brogioli](https://sites.google.com/site/dbrogioli/) and originally released on [SourceForge](http://jljp.sourceforge.net/) in 2013. Detailed theory underlying this application is documented in _A new open source software for the calculation of the liquid junction potential between two solutions according to the stationary Nernst-Planck equation_ ([arXiv:1403.3640](https://arxiv.org/abs/1403.3640)). At the time of its creation JLJP was the only open source LJP calculator freely available on the Internet which did not limit the number of ions used in the calculation. Source code and documentation was repackaged for GitHub by [Scott W Harden](https://github.com/swharden) in 2020. See [changelog.md](dev/changelog.md) for additional modification details.
+## History
+
+JLJP was originally written by **[Doriano Brogioli](https://sites.google.com/site/dbrogioli/)** and published on [SourceForge](http://jljp.sourceforge.net/) under a [creative commons attribution license](https://creativecommons.org/licenses/by/3.0/us/) in 2013. Detailed theory underlying this application is documented in _A new open source software for the calculation of the liquid junction potential between two solutions according to the stationary Nernst-Planck equation_ ([Marino et al., 2014](https://arxiv.org/abs/1403.3640)). At the time of its creation JLJP was the only open source LJP calculator freely available on the Internet which did not limit the number of ions used in the calculation. 
+
+**[Scott W Harden](https://github.com/swharden)** uploaded the JLJP source code to GitHub in under a [MIT license](LICENSE) (with permission from the original author) in 2020. The original version can still be found in [Releases](https://github.com/swharden/JLJP/releases). Scott modified the code to make it compile without errors on modern versions of Java, re-wrote the documentation, lightly improved the GUI, and added jUnit tests to ensure LJP calculations remain accurate.
 
 ## Quickstart
 * Install the [Java Platform (JDK)](https://www.oracle.com/technetwork/java/javase/downloads/)
+* Ensure Java's `bin` folder is in your system path ([instructions](https://www.java.com/en/download/help/path.xml))
 * Compile with `javac -nowarn Jljp.java`
 * Launch the GUI with `java Jljp.class`
 * Add ions (Zn, K, and Cl) as seen in the screenshot
