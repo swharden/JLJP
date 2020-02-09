@@ -71,9 +71,9 @@ public class CalculationTest {
 
         // Derivative of log of activity by concentration times concentration
         // For small concentrations, this term is 1, and needs not be defined
-		Zn.setCdadc("-1.0+2.0/3.0*(atan((Zn-5.45776)*0.408978)*2.35004+3.0-atan(-5.45776*0.408978)*2.35004)");
-		K.setCdadc("1.0");
-		Cl.setCdadc("1.0/2.0+1.0/6.0*(atan((Zn-5.45776)*0.408978)*2.35004+3.0-atan(-5.45776*0.408978)*2.35004)");
+        Zn.setCdadc("-1.0+2.0/3.0*(atan((Zn-5.45776)*0.408978)*2.35004+3.0-atan(-5.45776*0.408978)*2.35004)");
+        K.setCdadc("1.0");
+        Cl.setCdadc("1.0/2.0+1.0/6.0*(atan((Zn-5.45776)*0.408978)*2.35004+3.0-atan(-5.45776*0.408978)*2.35004)");
 
         // use really large concentrations so cdadc becomes relevant
         Zn.setC0(9.0 * Ion.Nav * 1000.0);
@@ -101,4 +101,27 @@ public class CalculationTest {
         assertEquals(ljp_mV, expected_mV, allowableDifference_mV);
     }
 
+    // @Test // this is very slow to run
+    public void test_ljpMath_variance() throws Exception {
+
+        // repeatedly calculate LJP from the screenshot values
+        int repetitionCount = 10000;
+        for (int i = 0; i < repetitionCount; i++) {
+
+            IonSet isss = new IonSet();
+            isss.add(new Ion("Zn", 9, 0.0284));
+            isss.add(new Ion("K", 0, 3));
+            isss.add(new Ion("Cl", 18, 3.0568));
+
+            double ljp_V = isss.calculate(null);
+            double ljp_mV = ljp_V * mVperV;
+
+            // if (printLog)
+            System.out.println(ljp_mV);
+        }
+
+        // double expected_mV = -20.82;
+        // double allowableDifference_mV = .01;
+        // assertEquals(ljp_mV, expected_mV, allowableDifference_mV);
+    }
 }
