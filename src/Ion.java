@@ -57,6 +57,10 @@ public class Ion {
 
 	private void updateMuAndChargeFromTable() {
 
+	    /* Values of mobility are calculated from diffusion coefficients
+	       taken from:
+	       CRC Handbook of Chemistry and Physics, CRC press, 2015 */
+	    
 		if (name.equalsIgnoreCase("Ag")) {
 			charge = +1;
 			mu = 4.01656e+11;
