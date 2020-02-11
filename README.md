@@ -36,7 +36,7 @@ A precompiled JAR file is also available: http://jljp.sourceforge.net/Jljp.jar
   * phi: relative flux of the ion (automatically calculated by the program)
 * You must define two ions as `x` and `last` (see note 2)
 
-_Note 1: cdadc is `c*d*ln(a/dc)`, i.e. the derivative of the logarithm of the activity with respect to the concentration, multiplied by the concentration. The units of "c" and "a" are M, mole/liter. The quantity c d ln a/dc is dimensionless. In the approximation of small concentrations, the activities are close to the concentrations, and c d ln a/dc is approximately 1. It is possible to put any formula in this field, depending on the concentrations of the ions, e.g. : `3*tan(Na/Cl)`._
+_Note 1: cdadc is the ion's concentration times the derivative of the logarithm of that ion's activity with respect to its concentration. The units of concentration and activity are M and cdadc is dimensionless. When calculating LJP for small concentrations (where ionic activity is close to concentration) this value is approximately 1.0_
 
 _Note 2: The values of c0 and cL for the ion "last" is ignored and calculated from the values of the other ions by imposing the electro-neutrality._
 
