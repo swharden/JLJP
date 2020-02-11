@@ -9,11 +9,6 @@ import java.awt.geom.*;
 import java.applet.*;
 import java.text.*;
 import java.util.*;
-import JSci.maths.*;
-import JSci.maths.matrices.*;
-import JSci.maths.vectors.*;
-import JSci.maths.symbolic.*;
-import JSci.maths.fields.*;
 
 /** A JPanel for editing the properties of an IonSet. */
 

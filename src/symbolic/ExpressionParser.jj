@@ -21,14 +21,9 @@ options {
 
 PARSER_BEGIN(ExpressionParser)
 
-package JSci.maths.symbolic;
-
-import JSci.maths.*;
-import JSci.maths.fields.*;
-import JSci.maths.groups.*;
+package symbolic;
 
 import java.io.*;
-import java.util.*;
 
 /** This class has some static methods to create an Expression from 
  * a string or a text stream.  */
@@ -36,54 +31,26 @@ public class ExpressionParser {
 
   private static ExpressionParser parser=null;
 
-  private static Map variables;
-
   /** Create an Expression reading a text from a stream. The text can
    * be something like "x+y*sin(z)".
    * @param is a stream
-   * @param vars a Map name / variable; it can 
-   * contain some of the variable names.	
    * @return the Expression
    */
-  public synchronized static Expression parse(InputStream is,Map vars) throws ParseException {
-    variables=vars;
-    if (variables==null) variables=new Hashtable();
+  public synchronized static Expression parse(InputStream is) throws ParseException {
     if (parser==null) parser = new ExpressionParser(is);
     else parser.ReInit(is);
     return parser.Input();
   }
 	
   /** Create an Expression from a String like "x+y*sin(z)". 
-   * @param s	a string 
-   * @param vars a Map name / variable; it can 
-   * contain some of the variable names.
-   * @return the Expression
-   */
-  public static Expression parse(String s,Map vars) throws ParseException {
-    InputStream i=new ByteArrayInputStream(s.getBytes());
-    return parse(i,vars);
-  }
-    
-  /** Create an Expression from a String like "x+y*sin(z)". 
-   * Variables are not accessible.
-   * @param s a string 
+   * @param s a string
    * @return the Expression
    */
   public static Expression parse(String s) throws ParseException {
     InputStream i=new ByteArrayInputStream(s.getBytes());
-    return parse(i,null);
+    return parse(i);
   }
-    
-  /** Create an Expression reading a text from a stream. The text can
-   * be something like "x+y*sin(z)". Variables are not accessible.
-   * @param is a stream
-   * @return the Expression
-   */
-  public static Expression parse(InputStream is) throws ParseException {
-    return parse(is,null);
-  }
-
-
+       
 
 }
 
@@ -117,7 +84,7 @@ Expression[] expressionP0l() :
   }
 |
   arga=expressionP1() "-" argb=expressionP0l()
-  { Expression b0neg=Expression.negative(argb[0]);
+  { Expression b0neg=new Negative(argb[0]);
     if (argb.length==2) return new Expression[] {arga,new Sum(b0neg,argb[1])};
     else return new Expression[] {arga,b0neg};
   }
@@ -147,7 +114,7 @@ Expression[] expressionP1l() :
   }
 |
   arga=expressionP2() "/" argb=expressionP1l()
-  { Expression b0inv=Expression.inverse(argb[0]);
+  { Expression b0inv=new Power(argb[0], -1);
     if (argb.length==2) return new Expression[] {arga,new Product(b0inv,argb[1])}; 
     else return new Expression[] {arga,b0inv};
   }
@@ -160,7 +127,7 @@ Expression expressionP2() :
 { Expression arg=null; }
 {
   "-" arg=expressionP3()
-  { return Expression.negative(arg); }
+  { return new Negative(arg); }
 |
   "+" arg=expressionP3()
   { return arg; } 
@@ -183,24 +150,18 @@ Expression expressionP4() :
 { Token f; Expression arg=null; }
 {
   f=<DNUM>
-  { return new Constant(new MathDouble(Double.parseDouble(f.toString()))); }
+  { return new Constant(Double.parseDouble(f.toString())); }
 |
   f=<INUM>
-  { return new Constant(new MathDouble(Integer.parseInt(f.toString()))); }
+  { return new Constant(Integer.parseInt(f.toString())); }
 |
   f=<IDENTIFIER>
-  { Variable v=(Variable)variables.get(f.toString());
-    if (v==null) 
-        v=new Variable(f.toString(),RealField.getInstance());
-    variables.put(f.toString(),v);
-    return v;
+  { 
+    return new Variable(f.toString());
   } 
 |
   f=<PI>
-  { return new Constant(RealField.PI); }
-|
-  f=<IUNIT>
-  { return new Constant(Complex.I); }
+  { return new Constant(Math.PI); }
 |
   f=<ONEARGFUNCTION> "(" arg=expressionP0() ")"
   { return new Function(f.toString(),arg); } 
@@ -223,11 +184,6 @@ TOKEN : /* one arg function */
 TOKEN : /* pi */
 {
   < PI: "pi" >
-}
-
-TOKEN : /* immaginary unit */
-{
-  < IUNIT: "i" >
 }
 
 TOKEN : /* identifiers */

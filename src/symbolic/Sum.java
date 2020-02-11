@@ -1,92 +1,66 @@
-package JSci.maths.symbolic;
- 
-import JSci.maths.*;
-import JSci.maths.groups.*;
-import java.util.*;
+package symbolic;
 
 class Sum extends Expression {
     
-    private final List terms;
+    private final Expression [] terms;
     
     public Sum(Expression [] a) {
-	terms = Arrays.asList(a);
+	terms = new Expression[a.length];
+	for (int j=0;j<a.length;j++)
+	    terms[j]=a[j];
     }
 
-    public Sum(List a) {
-	terms = a;
+    public Sum(Expression a, Expression b) {
+	terms = new Expression [] {a, b};
     }
 
-    public Sum(Expression a,Expression b) {
-	terms = new ArrayList();
-	terms.add(a);
-	terms.add(b);
-    }
-
-    public ArrayList<Variable> getVariables() { 
-	ArrayList<Variable> alv=new ArrayList<Variable>();
-	Iterator it=terms.iterator();
-	while (it.hasNext()) 
-	    alv.addAll(((Expression)(it.next())).getVariables());
-	return alv; 
-    }
+    public String [] getVariables() { 
+	int t=0;
+	for (int j=0;j<terms.length;j++)
+	    t+=terms[j].getVariables().length;
+	String [] l=new String [t];
+	int c=0;
+	for (int j=0;j<terms.length;j++) {
+	    String [] tt=terms[j].getVariables();
+	    for (int k=0;k<tt.length;k++)
+		l[c++]=tt[k];
+	}
+	return l;
+    }     
 
     public String toString() { 
 	String r = "";
-	Expression f;
-	for (int j=0;j<terms.size();j++) {
+	for (int j=0;j<terms.length;j++) {
 	    if (j>0) r+="+";
-	    f=(Expression)terms.get(j);
+	    Expression f=(Expression)terms[j];
 	    if (f.getPriority()<getPriority()) r+="("+f+")";
 	    else  r+=""+f;
 	}
 	return r;
     }
 
-    public Expression differentiate(Variable x) {
-	List r = new ArrayList();
-	for (int j=0;j<terms.size();j++) {
-	    r.add(((Expression)terms.get(j)).differentiate(x));
-	}
+    public Expression differentiate(String x) {
+	Expression [] r = new Expression[terms.length];
+	for (int j=0;j<terms.length;j++)
+	    r[j]=terms[j].differentiate(x);
 	return new Sum(r);
     }
 
-    public Expression evaluate() {
-	// svolge le somme contenute -> t
-	List t = new ArrayList();
-	for (int j=0;j<terms.size();j++) {
-	    Expression f=((Expression)terms.get(j)).evaluate();  // recursive
-	    if (f instanceof Sum)
-		for (int k=0;k<((Sum)f).terms.size();k++)
-		    t.add(((Sum)f).terms.get(k));
-	    else t.add(f);
-	}
-	// raccoglie le costanti -> s
-	AbelianGroup.Member c = null;
-	List s = new ArrayList();
-	for (int j=0;j<t.size();j++) {
-	    Expression f=(Expression)t.get(j);
-	    if (f instanceof Constant) {
-		if (c==null) c=(AbelianGroup.Member)((Constant)f).getValue();
-		else c = c.add((AbelianGroup.Member)((Constant)f).getValue());
-	    }
-	    else s.add(f);
-	}
-	if (c!=null && ! (((AbelianGroup)(c.getSet())).isZero(c)))
-	    s.add(new Constant(c));
+    public double evaluate(String [] vs, double [] xs) {
+	double p=0.;
+	for (int j=0;j<terms.length;j++)
+	    p=p+terms[j].evaluate(vs, xs);
+	return p;
+    }
 
-	// eventualmente qui si possono raccogliere i termini uguali a meno di una costante
-	// AGGIUNGERE !!!
-
-	// ritorno
-
-	if (s.size()==0) return new Constant(((AbelianGroup)getSet()).zero());
-	if (s.size()==1) return (Expression)s.get(0);
-	return new Sum(s);
+    public Expression substitute(String v, Expression e) {
+	Expression [] p=new Expression [terms.length];
+	for (int j=0;j<terms.length;j++) 
+	    p[j]=terms[j].substitute(v, e);
+	return new Sum(p);
     }
 
     protected int getPriority() {return 0;}
-
-    public Object getSet() { return ((Member)terms.get(0)).getSet(); }
 
 }
 

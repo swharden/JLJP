@@ -1,11 +1,7 @@
 import java.io.*;
 import java.text.*;
 import java.util.*;
-import JSci.maths.*;
-import JSci.maths.matrices.*;
-import JSci.maths.vectors.*;
-import JSci.maths.symbolic.*;
-import JSci.maths.fields.*;
+import symbolic.*;
 
 /**
  * The definition of the solutions. The Ion s are added to the IonSet, and then
@@ -14,278 +10,275 @@ import JSci.maths.fields.*;
 
 public class IonSet {
 
-	// Physical costants
-	private static final double KT = 1.3806488e-23 * (25.0 + 273.15);
-	private static final double e = 1.6e-19;
-	private static final double Nav = 6.02e23;
-	private static final double epsilon = 8.854187817e-12 * 80.1;
+    // Physical costants
+    private static final double KT = 1.3806488e-23 * (25.0 + 273.15);
+    private static final double e = 1.6e-19;
+    private static final double Nav = 6.02e23;
+    private static final double epsilon = 8.854187817e-12 * 80.1;
 
-	// Lista degli ioni
-	private ArrayList<Ion> list;
+    // Lista degli ioni
+    private ArrayList<Ion> list;
 
-	/**
-	 * Creates an empty IonSet. Must be then filled with the Ion s.
-	 */
-	public IonSet() {
-		list = new ArrayList<Ion>();
+    /**
+     * Creates an empty IonSet. Must be then filled with the Ion s.
+     */
+    public IonSet() {
+	list = new ArrayList<Ion>();
+    }
+
+    public String getDescription() {
+	String msg = "";
+	for (Ion ion : list) {
+	    msg += ion.getDescription() + "\n";
+	}
+	return msg.trim();
+    }
+
+    /**
+     * Adds an Ion to the IonSet. The last two Ion s have particular properties: are
+     * the "X" and "Last" Ion s.
+     * 
+     * @param i the Ion to be added.
+     */
+    public void add(Ion i) {
+	list.add(i);
+    }
+
+    /**
+     * Number of ions.
+     * 
+     * @return number of Ion s.
+     */
+    public int size() {
+	return list.size();
+    }
+
+    /**
+     * Gets the n-th ion of the IonSet.
+     * 
+     * @return the Ion.
+     */
+    public Ion get(int j) {
+	return list.get(j);
+    }
+
+    /**
+     * Calculates the potential.
+     * 
+     * @return the voltage across the liquid junction.
+     */
+
+    public double calculate() throws Exception {
+	return calculate(null);
+    }
+
+    /**
+     * Calculates the potential. Also outputs a table, with the concentrations of
+     * the ions along the liquid junction, and the voltage.
+     * 
+     * @param pst if not null, the table is sent here.
+     * @return the voltage across the liquid junction.
+     */
+
+    public double calculate(PrintStream pst) throws Exception {
+
+	// initial phi
+	double[] phis = new double[list.size() - 2];
+	for (int j = 0; j < list.size() - 2; j++)
+	    phis[j] = list.get(j).getCL() - list.get(j).getC0();
+
+	if (list.size() > 2) {
+	    Solver s = new Solver(new PhiEquations());
+	    s.solve(phis);
 	}
 
-	public String getDescription() {
-		String msg = "";
-		for (Ion ion : list) {
-			msg += ion.getDescription() + "\n";
-		}
-		return msg.trim();
+	double[] cLs = new double[list.size() - 2];
+	double r = 0.0;
+	try {
+	    r = givenPhi(pst, phis, cLs);
+	} catch (Exception ex) {
 	}
 
-	/**
-	 * Adds an Ion to the IonSet. The last two Ion s have particular properties: are
-	 * the "X" and "Last" Ion s.
-	 * 
-	 * @param i the Ion to be added.
-	 */
-	public void add(Ion i) {
-		list.add(i);
+	// Updates and return
+	for (int j = 0; j < list.size() - 2; j++)
+	    list.get(j).setPhi(phis[j]);
+	list.get(list.size() - 2).setPhi(list.get(list.size() - 2).getCL() - list.get(list.size() - 2).getC0());
+	double somma = 0.0;
+	for (int j = 0; j < list.size() - 1; j++)
+	    somma += list.get(j).getPhi() * list.get(j).getCharge();
+	list.get(list.size() - 1).setPhi(-somma / list.get(list.size() - 1).getCharge());
+	somma = 0.0;
+	for (int j = 0; j < list.size() - 1; j++)
+	    somma += list.get(j).getCL() * list.get(j).getCharge();
+	list.get(list.size() - 1).setCL(-somma / list.get(list.size() - 1).getCharge());
+
+	return r;
+    }
+
+    // Problem for finding the phis.
+    private class PhiEquations implements EquationSystem {
+	private double[] sigma;
+	private String[] vars;
+	private Expression[] eCdadc;
+
+	public PhiEquations() throws Exception {
+	    // sigma
+	    double min = -10.0;
+	    for (int j = 0; j < list.size(); j++)
+		if (list.get(j).getCL() != 0.0)
+		    if (min < 0.0 || Math.abs(list.get(j).getCL()) < min)
+			min = Math.abs(list.get(j).getCL());
+	    sigma = new double[list.size()];
+	    for (int j = 0; j < list.size(); j++)
+		if (list.get(j).getCL() != 0.0)
+		    sigma[j] = 0.01 * Math.abs(list.get(j).getCL());
+		else
+		    sigma[j] = 0.01 * min;
+	    // symbolic expressions
+	    vars = new String[list.size()];
+	    eCdadc = new Expression[list.size()];
+	    symbolicParsing(vars, eCdadc);
 	}
 
-	/**
-	 * Number of ions.
-	 * 
-	 * @return number of Ion s.
-	 */
-	public int size() {
-		return list.size();
+	public void equations(double[] x, double[] f) throws Exception {
+	    givenPhi(null, x, f, vars, eCdadc);
+	    for (int j = 0; j < list.size() - 2; j++) {
+		f[j] -= list.get(j).getCL();
+		f[j] /= sigma[j];
+	    }
 	}
 
-	/**
-	 * Gets the n-th ion of the IonSet.
-	 * 
-	 * @return the Ion.
-	 */
-	public Ion get(int j) {
-		return list.get(j);
+	public int number() {
+	    return list.size() - 2;
 	}
+    }
 
-	/**
-	 * Calculates the potential.
-	 * 
-	 * @return the voltage across the liquid junction.
-	 */
+    // define phi, and calculate the resulting cLs.
+    private double givenPhi(PrintStream pst, double[] phis, double[] cLs) throws Exception {
+	String[] vars = new String[list.size()];
+	Expression[] eCdadc = new Expression[list.size()];
+	symbolicParsing(vars, eCdadc);
+	return givenPhi(pst, phis, cLs, vars, eCdadc);
+    }
 
-	public double calculate() throws Exception {
-		return calculate(null);
+    private void symbolicParsing(String[] vars, Expression[] eCdadc) throws Exception {
+	for (int j = 0; j < list.size(); j++) {
+	    vars[j] = list.get(j).toString();
+	    eCdadc[j] = ExpressionParser.parse(list.get(j).getCdadc());
 	}
+    }
 
-	/**
-	 * Calculates the potential. Also outputs a table, with the concentrations of
-	 * the ions along the liquid junction, and the voltage.
-	 * 
-	 * @param pst if not null, the table is sent here.
-	 * @return the voltage across the liquid junction.
-	 */
+    private double givenPhi(PrintStream pst, double[] phis, double[] cLs, String[] vars, Expression[] eCdadc)
+	throws Exception {
 
-	public double calculate(PrintStream pst) throws Exception {
+	assert phis.length != list.size() - 2;
+	assert cLs.length != list.size() - 2;
 
-		// initial phi
-		double[] phis = new double[list.size() - 2];
-		for (int j = 0; j < list.size() - 2; j++)
-			phis[j] = list.get(j).getCL() - list.get(j).getC0();
+	// indices
+	int iCl = list.size() - 1;
+	int iK = list.size() - 2;
+	int num = list.size() - 1;
 
-		if (list.size() > 2) {
-			Solver s = new Solver(new PhiEquations());
-			s.solve(phis);
-		}
+	// parameters
 
-		double[] cLs = new double[list.size() - 2];
-		double r = 0.0;
-		try {
-			r = givenPhi(pst, phis, cLs);
-		} catch (Exception ex) {
-		}
+	String varCl = vars[iCl];
+	Expression eCdadcCl = eCdadc[iCl];
 
-		// Updates and return
-		for (int j = 0; j < list.size() - 2; j++)
-			list.get(j).setPhi(phis[j]);
-		list.get(list.size() - 2).setPhi(list.get(list.size() - 2).getCL() - list.get(list.size() - 2).getC0());
-		double somma = 0.0;
-		for (int j = 0; j < list.size() - 1; j++)
-			somma += list.get(j).getPhi() * list.get(j).getCharge();
-		list.get(list.size() - 1).setPhi(-somma / list.get(list.size() - 1).getCharge());
-		somma = 0.0;
-		for (int j = 0; j < list.size() - 1; j++)
-			somma += list.get(j).getCL() * list.get(j).getCharge();
-		list.get(list.size() - 1).setCL(-somma / list.get(list.size() - 1).getCharge());
+	double[] z = new double[num];
+	for (int j = 0; j < num; j++)
+	    z[j]=list.get(j).getCharge();
+	double zCl = list.get(iCl).getCharge();
 
-		return r;
-	}
+	double[] mu = new double[num];
+	for (int j = 0; j < num; j++)
+	    mu[j]=list.get(j).getMu();
+	double muCl = list.get(iCl).getMu();
 
-	// Problem for finding the phis.
-	private class PhiEquations implements EquationSystem {
-		private double[] sigma;
-		private Variable[] var;
-		private Expression[] eCdadc;
+	double[] cdadc = new double[num];
+	double cdadcCl;
 
-		public PhiEquations() throws Exception {
-			// sigma
-			double min = -10.0;
-			for (int j = 0; j < list.size(); j++)
-				if (list.get(j).getCL() != 0.0)
-					if (min < 0.0 || Math.abs(list.get(j).getCL()) < min)
-						min = Math.abs(list.get(j).getCL());
-			sigma = new double[list.size()];
-			for (int j = 0; j < list.size(); j++)
-				if (list.get(j).getCL() != 0.0)
-					sigma[j] = 0.01 * Math.abs(list.get(j).getCL());
-				else
-					sigma[j] = 0.01 * min;
-			// symbolic expressions
-			var = new Variable[list.size()];
-			eCdadc = new Expression[list.size()];
-			symbolicParsing(var, eCdadc);
-		}
+	double[] phi = new double[num];
+	for (int j = 0; j < num - 1; j++)
+	    phi[j]=phis[j];
+	phi[num - 1]=list.get(iK).getCL() - list.get(iK).getC0();
+	double phiCl = -Linalg.scalarProd(z,phi) / zCl;
 
-		public void equations(double[] x, double[] f) throws Exception {
-			givenPhi(null, x, f, var, eCdadc);
-			for (int j = 0; j < list.size() - 2; j++) {
-				f[j] -= list.get(j).getCL();
-				f[j] /= sigma[j];
-			}
-		}
+	double KC0 = list.get(iK).getC0();
+	double KCL = list.get(iK).getCL();
+	double dK = (KCL - KC0) / 1000.0;
 
-		public int number() {
-			return list.size() - 2;
-		}
-	}
+	assert dK != 0;
 
-	// define phi, and calculate the resulting cLs.
-	private double givenPhi(PrintStream pst, double[] phis, double[] cLs) throws Exception {
-		Variable[] var = new Variable[list.size()];
-		Expression[] eCdadc = new Expression[list.size()];
-		symbolicParsing(var, eCdadc);
-		return givenPhi(pst, phis, cLs, var, eCdadc);
-	}
+	// inizialization
+	double[] rho = new double[num];
+	for (int j = 0; j < num; j++)
+	    rho[j]=list.get(j).getC0();
+	double rhoCl = -Linalg.scalarProd(z,rho) / zCl;
+	list.get(iCl).setC0(rhoCl);
+	double V = 0.0;
 
-	private void symbolicParsing(Variable[] var, Expression[] eCdadc) throws Exception {
+	// cycle
+	for (double rhoK = KC0; ((dK > 0) ? rhoK <= KCL : rhoK >= KCL); rhoK += dK) {
 
-		for (int j = 0; j < list.size(); j++)
-			var[j] = new Variable(list.get(j).toString(), RealField.getInstance());
-		Hashtable vht = new Hashtable();
-		for (int j = 0; j < list.size(); j++)
-			vht.put(var[j].toString(), var[j]);
+	    rhoCl = -Linalg.scalarProd(rho,z) / zCl;
 
-		for (int j = 0; j < list.size(); j++)
-			eCdadc[j] = ExpressionParser.parse(list.get(j).getCdadc(), vht);
-	}
-
-	private double givenPhi(PrintStream pst, double[] phis, double[] cLs, Variable[] var, Expression[] eCdadc)
-			throws Exception {
-
-		assert phis.length != list.size() - 2;
-		assert cLs.length != list.size() - 2;
-
-		// indices
-		int iCl = list.size() - 1;
-		int iK = list.size() - 2;
-		int num = list.size() - 1;
-
-		// parameters
-
-		Variable varCl = var[iCl];
-		Expression eCdadcCl = eCdadc[iCl];
-
-		DoubleVector z = new DoubleVector(num);
+	    if (pst != null) {
 		for (int j = 0; j < num; j++)
-			z.setComponent(j, list.get(j).getCharge());
-		double zCl = list.get(iCl).getCharge();
+		    pst.print(rho[j] / 1000.0 / Nav + " ");
+		pst.println(rhoCl / 1000.0 / Nav + " " + V);
+	    }
 
-		DoubleVector mu = new DoubleVector(num);
-		for (int j = 0; j < num; j++)
-			mu.setComponent(j, list.get(j).getMu());
-		double muCl = list.get(iCl).getMu();
+	    // c dadc
 
-		DoubleVector cdadc = new DoubleVector(num);
-		double cdadcCl;
+	    double[] vals=new double[vars.length];
+	    for (int j = 0; j < num; j++)
+		vals[j]=rho[j] / 1000.0 / Nav;
+	    vals[iCl]=rhoCl / 1000.0 / Nav;
 
-		DoubleVector phi = new DoubleVector(num);
-		for (int j = 0; j < num - 1; j++)
-			phi.setComponent(j, phis[j]);
-		phi.setComponent(num - 1, list.get(iK).getCL() - list.get(iK).getC0());
-		double phiCl = -z.scalarProduct(phi) / zCl;
+	    for (int j = 0; j < num; j++)
+		cdadc[j]=eCdadc[j].evaluate(vars, vals);
+	    cdadcCl=eCdadcCl.evaluate(vars, vals);
 
-		double KC0 = list.get(iK).getC0();
-		double KCL = list.get(iK).getCL();
-		double dK = (KCL - KC0) / 1000.0;
+	    // linear equation
+	    double[][] mD = new double[num][num];
+	    for (int j = 0; j < num; j++)
+		for (int k = 0; k < num; k++)
+		    mD[j][k]=0.0;
+	    for (int j = 0; j < num; j++)
+		mD[j][j]=mu[j] * KT * cdadc[j];
+	    double DCl = muCl * KT * cdadcCl;
 
-		assert dK != 0;
+	    double[] v = new double[num];
+	    for (int j = 0; j < num; j++)
+		v[j]= z[j] * e * mu[j] * rho[j];
+	    double vCl = zCl * e * muCl * rhoCl;
 
-		// inizialization
-		AbstractDoubleVector rho = new DoubleVector(num);
-		for (int j = 0; j < num; j++)
-			rho.setComponent(j, list.get(j).getC0());
-		double rhoCl = -z.scalarProduct(rho) / zCl;
-		list.get(iCl).setC0(rhoCl);
-		double V = 0.0;
+	    if (Linalg.scalarProd(z,v) + zCl * vCl == 0.0)
+		throw new Exception("Singularity; unable to continue the calculation");
 
-		// cycle
-		for (double rhoK = KC0; ((dK > 0) ? rhoK <= KCL : rhoK >= KCL); rhoK += dK) {
+	    double[] Delta = Linalg.scalarMultiply(Linalg.prod(Linalg.sum(1.,mD,-DCl,Linalg.identity(num)), z),
+						   1./(Linalg.scalarProd(z,v) + zCl * vCl)
+						   );
+	    double[][] mDyadic = new double[num][num];
+	    for (int j = 0; j < num; j++)
+		for (int k = 0; k < num; k++)
+		    mDyadic[j][k]=v[j] * Delta[k];
+	double[][] mM = Linalg.sum(1.,mDyadic,-1.,mD);
+	// solve
+	double[] rhop = Linalg.solve(mM, phi);
+	double rhopCl = -Linalg.scalarProd(z,rhop) / zCl;
+	double rhopK = rhop[iK];
+	// results
+	double E = Linalg.scalarProd(Delta,rhop);
+	rho = Linalg.sum(1., rho, dK/rhopK, rhop);
+	V -= E * dK / rhopK;
+    }
 
-			rhoCl = -rho.scalarProduct(z) / zCl;
+    // store the results
+    for (int j = 0; j < num - 1; j++)
+	cLs[j] = rho[j];
 
-			if (pst != null) {
-				for (int j = 0; j < num; j++)
-					pst.print(rho.getComponent(j) / 1000.0 / Nav + " ");
-				pst.println(rhoCl / 1000.0 / Nav + " " + V);
-			}
-
-			// c dadc
-
-			for (int j = 0; j < num; j++)
-				var[j].setValue(new MathDouble(rho.getComponent(j) / 1000.0 / Nav));
-			varCl.setValue(new MathDouble(rhoCl / 1000.0 / Nav));
-
-			for (int j = 0; j < num; j++)
-				cdadc.setComponent(j, ((MathDouble) (((Constant) (eCdadc[j].evaluate())).getValue())).doubleValue());
-			cdadcCl = ((MathDouble) (((Constant) (eCdadcCl.evaluate())).getValue())).doubleValue();
-
-			// linear equation
-			DoubleSquareMatrix mD = new DoubleSquareMatrix(num);
-			for (int j = 0; j < num; j++)
-				for (int k = 0; k < num; k++)
-					mD.setElement(j, k, 0.0);
-			for (int j = 0; j < num; j++)
-				mD.setElement(j, j, mu.getComponent(j) * KT * cdadc.getComponent(j));
-			double DCl = muCl * KT * cdadcCl;
-
-			DoubleVector v = new DoubleVector(num);
-			for (int j = 0; j < num; j++)
-				v.setComponent(j, z.getComponent(j) * e * mu.getComponent(j) * rho.getComponent(j));
-			double vCl = zCl * e * muCl * rhoCl;
-
-			if (z.scalarProduct(v) + zCl * vCl == 0.0)
-				throw new Exception("Singularity; unable to continue the calculation");
-
-			AbstractDoubleVector Delta = mD.subtract(DoubleDiagonalMatrix.identity(num).scalarMultiply(DCl)).multiply(z)
-					.scalarDivide(z.scalarProduct(v) + zCl * vCl);
-			DoubleSquareMatrix mDyadic = new DoubleSquareMatrix(num);
-			for (int j = 0; j < num; j++)
-				for (int k = 0; k < num; k++)
-					mDyadic.setElement(j, k, v.getComponent(j) * Delta.getComponent(k));
-			AbstractDoubleSquareMatrix mM = (AbstractDoubleSquareMatrix) mDyadic.subtract(mD);
-			// solve
-			AbstractDoubleVector rhop = LinearMath.solve(mM, phi);
-			double rhopCl = -z.scalarProduct(rhop) / zCl;
-			double rhopK = rhop.getComponent(iK);
-			// results
-			double E = Delta.scalarProduct(rhop);
-			rho = rho.add(rhop.scalarMultiply(dK / rhopK));
-			V -= E * dK / rhopK;
-		}
-
-		// store the results
-		for (int j = 0; j < num - 1; j++)
-			cLs[j] = rho.getComponent(j);
-
-		return V;
-	}
+    return V;
+}
 
 }

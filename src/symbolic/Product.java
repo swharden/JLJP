@@ -1,124 +1,74 @@
-package JSci.maths.symbolic;
- 
-import JSci.maths.*;
-import JSci.maths.groups.*;
-import JSci.maths.fields.*;
+package symbolic;
 
 import java.util.*;
 
-class Product extends Expression {
+public class Product extends Expression {
 
-    private final List terms;
+    private final Expression [] terms;
 
     public Product(Expression [] a) {
-	terms = Arrays.asList(a);
+	terms = new Expression[a.length];
+	for (int j=0;j<a.length;j++)
+	    terms[j]=a[j];
     }
 
-    public Product(List a) {
-	terms = a;
+    public Product(Expression a, Expression b) {
+	terms = new Expression [] {a, b};
     }
 
-    public Product(Expression a,Expression b) {
-	terms = new ArrayList();
-	terms.add(a);
-	terms.add(b);
-    }
-
-    public ArrayList<Variable> getVariables() { 
-	ArrayList<Variable> alv=new ArrayList<Variable>();
-	Iterator it=terms.iterator();
-	while (it.hasNext()) 
-	    alv.addAll(((Expression)(it.next())).getVariables());
-	return alv; 
+    public String [] getVariables() { 
+	int t=0;
+	for (int j=0;j<terms.length;j++)
+	    t+=terms[j].getVariables().length;
+	String [] l=new String [t];
+	int c=0;
+	for (int j=0;j<terms.length;j++) {
+	    String [] tt=terms[j].getVariables();
+	    for (int k=0;k<tt.length;k++)
+		l[c++]=tt[k];
+	}
+	return l;
     }
 
     public String toString() { 
 	String r = "";
-	Expression f;
-	for (int j=0;j<terms.size();j++) {
+	for (int j=0;j<terms.length;j++) {
 	    if (j>0) r+="*";
-	    f=(Expression)terms.get(j);
+	    Expression f=terms[j];
 	    if (f.getPriority()<getPriority()) r+="("+f+")";
 	    else  r+=""+f;
 	}
 	return r;
     }
 
-    public Expression differentiate(Variable x) {
-	List r = new ArrayList();
-	List p;
-	for (int j=0;j<terms.size();j++) {
-	    p = new ArrayList();
-	    for (int k=0;k<terms.size();k++) {
-		if (j==k) p.add(((Expression)terms.get(k)).differentiate(x));
-		else p.add(((Expression)terms.get(k)));
+    public Expression differentiate(String x) {
+	Expression [] s = new Expression[terms.length];
+	Expression [] p = new Expression[terms.length];
+	for (int j=0;j<terms.length;j++) {
+	    for (int k=0;k<terms.length;k++) {
+		if (j==k) p[k]=terms[k].differentiate(x);
+		else p[k]=terms[k];
 	    }
-	    r.add(new Product(p));
+	    s[j]=new Product(p);
 	}
-	return new Sum(r);
+	return new Sum(s);
     }
 
-    public Expression evaluate() {
-	// svolge i prodotti contenuti -> t
-	List t = new ArrayList();
-	for (int j=0;j<terms.size();j++) {
-	    Expression f=((Expression)terms.get(j)).evaluate();  // recursive
-	    if (Product.class.isInstance(f))
-		for (int k=0;k<((Product)f).terms.size();k++)
-		    t.add(((Product)f).terms.get(k));
-	    else t.add(f);
-	}
-	// raccoglie le costanti -> s
-	Ring.Member c = null;
-	List s = new ArrayList();
-	for (int j=0;j<t.size();j++) {
-	    Expression f=(Expression)t.get(j);
-	    if (f instanceof Constant) {
-		if (c==null) c=(Ring.Member)(((Constant)f).getValue());
-		else c = c.multiply((Ring.Member)((Constant)f).getValue());
-	    }
-	    else s.add(f);
-	}
-	if (c!=null && ((AbelianGroup)(c.getSet())).isZero(c)) 
-	    return new Constant(c);
-	if (c!=null && ! (((Ring)(c.getSet())).isOne(c)))  
-	    s.add(new Constant(c));
-	// raduna i termini con base uguale -> h
-	Hashtable h = new Hashtable();
-	for (int j=0;j<s.size();j++) {
-	    Expression b;
-	    int e;
-	    if (s.get(j) instanceof Power) {
-		b = ((Power)s.get(j)).getBase();
-		e = ((Power)s.get(j)).getExponent();
-	    }
-	    else {
-		b = (Expression) s.get(j);
-		e = 1;
-	    }
-	    if (h.containsKey(b)) 
-		e+=((Integer)h.get(b)).intValue();
-	    h.put(b,new Integer(e));
-	}
-	// traduce h -> s
-	s = new  ArrayList();
-	for (Enumeration fe=h.keys();fe.hasMoreElements();)  {
-	    Expression b = (Expression)fe.nextElement();
-	    int e = ((Integer)h.get(b)).intValue();
-	    if (e!=0) {
-		if (e==1) s.add(b);
-		else if (e!=0) s.add(new Power(b,e));
-	    }
-	}
-	// ritorno
-	if (s.size()==0) return new Constant(((Ring)getSet()).one());
-	if (s.size()==1) return (Expression)s.get(0);
-	return new Product(s);
+    public double evaluate(String [] vs, double [] xs) {
+	double p=1.;
+	for (int j=0;j<terms.length;j++)
+	    p=p*terms[j].evaluate(vs, xs);
+	return p;
+    }
+
+    public Expression substitute(String v, Expression e) {
+	Expression [] p=new Expression [terms.length];
+	for (int j=0;j<terms.length;j++) 
+	    p[j]=terms[j].substitute(v, e);
+	return new Product(p);
     }
 
     protected int getPriority() {return 10;}
-
-    public Object getSet() { return ((Member)terms.get(0)).getSet(); }
 
 }
 

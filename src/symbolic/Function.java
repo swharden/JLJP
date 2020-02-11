@@ -1,149 +1,160 @@
-package JSci.maths.symbolic;
- 
-import JSci.maths.*;
-import JSci.maths.fields.*;
-import JSci.maths.groups.*;
+package symbolic;
 
-import java.util.*;
-
-/** A function like sin(x), exp(x) or sqrt(x). <br>
-This will be substituted by <code>Evaluation</code>.
+/** A function like sin(x), exp(x) or sqrt(x).
 */
 public class Function extends Expression {
 
-    public static final String SIN = "sin";
-    public static final String COS = "cos";
-    public static final String TAN = "tan";
-    public static final String ASIN = "asin";
-    public static final String ACOS = "acos";
-    public static final String ATAN = "atan";
-    public static final String SINH = "sinh";
-    public static final String COSH = "cosh";
-    public static final String TANH = "tanh";
-    public static final String ASINH = "asinh";
-    public static final String ACOSH = "acosh";
-    public static final String ATANH = "atanh";
-    public static final String EXP = "exp";
-    public static final String LOG = "log";
-    public static final String SQRT = "sqrt";
+    public static final int SIN = 0;
+    public static final int COS = 1;
+    public static final int TAN = 2;
+    public static final int ASIN = 3;
+    public static final int ACOS = 4;
+    public static final int ATAN = 5;
+    public static final int SINH = 6;
+    public static final int COSH = 7;
+    public static final int TANH = 8;
+    public static final int ASINH = 9;
+    public static final int ACOSH = 10;
+    public static final int ATANH = 11;
+    public static final int EXP = 12;
+    public static final int LOG = 13;
+    public static final int SQRT = 14;
 
-    private final String type;
+    private final int type;
     private final Expression arg;
 
-    public ArrayList<Variable> getVariables() { 
+    public String [] getVariables() { 
 	return arg.getVariables(); 
     }
 
     /**
-	* @param n the name (type) of the function; for example, Function.SIN
+	* @param n the type of the function; for example, Function.SIN
 	* @param a the argument
 	*/
-    public Function(String n,Expression a) {
+    public Function(int n, Expression a) {
 	type=n;
 	arg=a;
     }
 
-    public String toString() { return type+"("+arg+")"; }
+
+    /**
+     * @param n the name of the function; for example, "sin"
+     * @param a the argument
+     */
+    public Function(String n, Expression a) {
+
+	int t=-10;
+	if (n.equals("sin"))t=0;
+	if (n.equals("cos"))t=1;
+	if (n.equals("tan"))t=2;
+	if (n.equals("asin"))t=3;
+	if (n.equals("acos"))t=4;
+	if (n.equals("atan"))t=5;
+	if (n.equals("sinh"))t=6;
+	if (n.equals("cosh"))t=7;
+	if (n.equals("tanh"))t=8;
+	if (n.equals("asinh"))t=9;
+	if (n.equals("acosh"))t=10;
+	if (n.equals("atanh"))t=11;
+	if (n.equals("exp"))t=12;
+	if (n.equals("log"))t=13;
+	if (n.equals("sqrt"))t=14;
+	if (t<0) throw new Error("Unrecognized function name");
+
+	type=t;
+	arg=a;
+
+    }
+
+
+    public String toString() { 
+	String name="UNKNOWN";
+	switch (type) {
+	case SIN: name="sin"; break;
+	case COS: name="cos"; break;
+	case TAN: name="tan"; break;
+	case ASIN: name="asin"; break;
+	case ACOS: name="acos"; break;
+	case ATAN: name="atan"; break;
+	case SINH: name="sinh"; break;
+	case COSH: name="cosh"; break;
+	case TANH: name="tanh"; break;
+	case ASINH: name="asinh"; break;
+	case ACOSH: name="acosh"; break;
+	case ATANH: name="atanh"; break;
+	case EXP: name="exp"; break;
+	case LOG: name="log"; break;
+	case SQRT: name="sqrt"; break;
+	}
+	return name+"("+arg+")"; 
+    }
 
     public int getPriority() {return 15;}
 
-    public Expression differentiate(Variable x) {
-	Expression d=null;
-	if (type.equals(SIN)) d=new Function(COS,arg);
-	if (type.equals(COS)) d=Expression.negative(new Function(SIN,arg));
-	if (type.equals(TAN)) d=Expression.power(new Function(COS,arg),-2);
-	if (type.equals(ASIN)) d=Expression.inverse(new Function(SQRT,Expression.sum( ((Ring)getSet()).one(), Expression.negative(Expression.power(arg,2)) )));
-	if (type.equals(ACOS)) d=Expression.inverse(new Function(SQRT,Expression.sum( ((Ring)getSet()).one(), Expression.negative(Expression.power(arg,2)) ) ));
-	if (type.equals(ATAN)) d=Expression.inverse(Expression.sum( ((Ring)getSet()).one(), Expression.power(arg,2) ));
-	if (type.equals(SINH)) d=new Function(COSH,arg);
-	if (type.equals(COSH)) d=new Function(SINH,arg);
-	if (type.equals(TANH)) d=Expression.power(new Function(COSH,arg),-2);
-	if (type.equals(ASINH)) d=Expression.inverse(new Function(SQRT,Expression.sum(((Ring)getSet()).one(),Expression.power(arg,2))));
-    	if (type.equals(ACOSH)) d=Expression.inverse(new Function(SQRT,Expression.sum(((Ring)getSet()).one().negate(),Expression.power(arg,2))));
-	if (type.equals(ATANH)) d=Expression.inverse(new Function(SQRT,Expression.sum(((Ring)getSet()).one(),Expression.power(arg,2).negate())));
-	if (type.equals(EXP)) d=new Function(EXP,arg);
-	if (type.equals(LOG)) d=Expression.inverse(arg);
-	if (type.equals(SQRT)) d=Expression.inverse(Expression.product((Ring.Member)((Ring)getSet()).one().add(((Ring)getSet()).one()),new Function(SQRT,arg)));
+    private static Expression inverse(Expression e) { return new Power(e, -1); }
 
+    public Expression differentiate(String x) {
+	Expression d=null;
+	switch (type) {
+	case SIN: d=new Function(COS,arg); break;
+	case COS: d=new Negative(new Function(SIN,arg)); break;
+	case TAN: d=new Power(new Function(COS,arg),-2); break;
+	case ASIN: d=inverse(new Function(SQRT,new Sum(new Constant(1.), new Negative(new Power(arg,2)) ))); break;
+	case ACOS: d=inverse(new Function(SQRT,new Sum(new Constant(1.), new Negative(new Power(arg,2)) ) )); break;
+	case ATAN: d=inverse(new Sum( new Constant(1.), new Power(arg,2) )); break;
+	case SINH: d=new Function(COSH,arg); break;
+	case COSH: d=new Function(SINH,arg); break;
+	case TANH: d=new Power(new Function(COSH,arg),-2); break;
+	case ASINH: d=inverse(new Function(SQRT,new Sum(new Constant(1.),new Power(arg,2)))); break;
+    	case ACOSH: d=inverse(new Function(SQRT,new Sum(new Constant(-1.), new Power(arg,2)))); break;
+	case ATANH: d=inverse(new Function(SQRT,new Sum(new Constant(1.), new Negative(new Power(arg,2))))); break;
+	case EXP: d=new Function(EXP,arg); break;
+	case LOG: d=inverse(arg); break;
+	case SQRT: d=inverse(new Product( new Constant(2.), new Function(SQRT,arg))); break;
+	}
 	if (d==null) 
 	    throw new IllegalArgumentException("Unknown Function type in derivative()");
-	return Expression.product(d,arg.differentiate(x));
+	return new Product(d,arg.differentiate(x));
     }
 
     public boolean equals(Object o) {
-	if (!Function.class.isInstance(o)) return false;
-	Function f = (Function)o;
-	return (type.equals(f.type) && arg.equals(f.arg));
+	if (o instanceof Function) {
+	    Function f = (Function)o;
+	    return ( (type == f.type) && arg.equals(f.arg));
+	}
+	return false;
     }
-
-    public Object getSet() { return arg.getSet(); }
     
-    public Expression evaluate() {
-	Expression sarg = arg.evaluate();
-	
-	if (sarg instanceof Constant) {
-	    if (((Constant)sarg).getValue() instanceof Complex) {
-		Complex a = (Complex)((Constant)sarg).getValue();
-		if (type.equals(SIN)) return new Constant(Complex.sin(a));
-		if (type.equals(COS)) return new Constant(Complex.cos(a));
-		if (type.equals(TAN)) return new Constant(Complex.tan(a));
-		if (type.equals(ASIN)) return new Constant(Complex.asin(a));
-		if (type.equals(ACOS)) return new Constant(Complex.acos(a));
-		if (type.equals(ATAN)) return new Constant(Complex.atan(a));
-		if (type.equals(SIN)) return new Constant(Complex.sinh(a));
-		if (type.equals(COS)) return new Constant(Complex.cosh(a));
-		if (type.equals(TAN)) return new Constant(Complex.tanh(a));
-		if (type.equals(ASIN)) return new Constant(Complex.asinh(a));
-		if (type.equals(ACOS)) return new Constant(Complex.acosh(a));
-		if (type.equals(ATAN)) return new Constant(Complex.atanh(a));
-		if (type.equals(EXP)) return new Constant(Complex.exp(a));
-		if (type.equals(LOG)) return new Constant(Complex.log(a));
-		if (type.equals(SQRT)) return new Constant(a.sqrt());
-		throw new IllegalArgumentException("Unknown Function type in evaluate()");
-	    }
-	    if (((Constant)sarg).getValue() instanceof MathDouble) {
-		MathDouble a = (MathDouble)((Constant)sarg).getValue();
-		if (type.equals(SIN)) return new Constant(MathDouble.sin(a));
-		if (type.equals(COS)) return new Constant(MathDouble.cos(a));
-		if (type.equals(TAN)) return new Constant(MathDouble.tan(a));
-		if (type.equals(ASIN)) return new Constant(MathDouble.asin(a));
-		if (type.equals(ACOS)) return new Constant(MathDouble.acos(a));
-		if (type.equals(ATAN)) return new Constant(MathDouble.atan(a));
-		if (type.equals(SIN)) return new Constant(MathDouble.sinh(a));
-		if (type.equals(COS)) return new Constant(MathDouble.cosh(a));
-		if (type.equals(TAN)) return new Constant(MathDouble.tanh(a));
-		if (type.equals(ASIN)) return new Constant(MathDouble.asinh(a));
-		if (type.equals(ACOS)) return new Constant(MathDouble.acosh(a));
-		if (type.equals(ATAN)) return new Constant(MathDouble.atanh(a));
-		if (type.equals(EXP)) return new Constant(MathDouble.exp(a));
-		if (type.equals(LOG)) return new Constant(MathDouble.log(a));
-		if (type.equals(SQRT)) return new Constant(new MathDouble(Math.sqrt(a.value())));
-		throw new IllegalArgumentException("Unknown Function type in evaluate()");
-	    }
-	    throw new IllegalArgumentException("Function argument is "+sarg.getSet()+" ; must be Complex or MathDouble");
+    public double evaluate(String [] vs, double [] xs) {
+	double sarg = arg.evaluate(vs, xs);
+
+	switch (type) {
+	case SIN: return Math.sin(sarg);
+	case COS: return Math.cos(sarg);
+	case TAN: return Math.tan(sarg);
+	case ASIN: return Math.asin(sarg);
+	case ACOS: return Math.acos(sarg);
+	case ATAN: return Math.atan(sarg);
+	case SINH: return Math.sinh(sarg);
+	case COSH: return Math.cosh(sarg);
+	case TANH: return Math.tanh(sarg);
+	case ASINH: return Double.NaN; //Math.asinh(sarg);
+	case ACOSH: return Double.NaN; // Math.acosh(sarg);
+	case ATANH: return Double.NaN; // Math.atanh(sarg);
+	case EXP: return Math.exp(sarg);
+	case LOG: return Math.log(sarg);
+	case SQRT: return Math.sqrt(sarg);
 	}
 
-	if (sarg instanceof Function) {
-	    Function f = (Function)sarg;
-	    if (type.equals(SIN) && f.type.equals(ASIN)) return f.arg; 
-	    if (type.equals(COS) && f.type.equals(ACOS)) return f.arg; 
-	    if (type.equals(TAN) && f.type.equals(ATAN)) return f.arg; 
-	    if (type.equals(ASIN) && f.type.equals(SIN)) return f.arg; 
-	    if (type.equals(ACOS) && f.type.equals(COS)) return f.arg; 
-	    if (type.equals(ATAN) && f.type.equals(TAN)) return f.arg; 
-	    if (type.equals(SINH) && f.type.equals(ASINH)) return f.arg; 
-	    if (type.equals(COSH) && f.type.equals(ACOSH)) return f.arg; 
-	    if (type.equals(TANH) && f.type.equals(ATANH)) return f.arg; 
-	    if (type.equals(ASINH) && f.type.equals(SINH)) return f.arg; 
-	    if (type.equals(ACOSH) && f.type.equals(COSH)) return f.arg; 
-	    if (type.equals(ATANH) && f.type.equals(TANH)) return f.arg; 
-	    if (type.equals(EXP) && f.type.equals(LOG)) return f.arg; 
-	    if (type.equals(LOG) && f.type.equals(EXP)) return f.arg;
-	}
-
-	return new Function(type,sarg);
-
+	return Double.NaN;
     }
+
+
+    public Expression substitute(String v, Expression e) { 
+	return new Function(type, arg.substitute(v,e));
+    }
+
+
 
 }	
 

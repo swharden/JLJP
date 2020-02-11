@@ -1,41 +1,39 @@
-package JSci.maths.symbolic;
- 
-import java.util.*;
-import JSci.maths.*;
-import JSci.maths.groups.*;
-import JSci.maths.fields.*;
+package symbolic;
 
-/** This class wraps any constant value. Probably it will become
- * obsolete! */
+/** This class wraps a double value. */
 public class Constant extends Expression {
-    private final Member value;
 
-    public ArrayList<Variable> getVariables() { 
-	return new ArrayList<Variable>(); 
+    private final double value;
+
+    public String [] getVariables() { 
+	return new String[0]; 
     }
-
 
     /** A constant Expression
      * @param x the constant value
      */
-    public Constant(Member x) {
+    public Constant(double x) {
 	value=x;
     }
 
     public String toString() { 
-	return value.toString();
+	return Double.toString(value);
     }
 
-    public Expression differentiate(Variable x) {
-	return new Constant(((AbelianGroup)getSet()).zero());
+    public Expression differentiate(String x) {
+	return new Constant(0.);
     }
 
-    public Expression evaluate() {
+    public double evaluate(String [] vs, double [] xs) {
+	return value;
+    }
+
+    public Expression substitute(String v, Expression e) {
 	return this;
     }
 
     protected int getPriority() { 
-	String sv=value.toString();
+	String sv=Double.toString(value);
         if (
             sv.indexOf("+")!=-1 ||
             sv.indexOf("-")!=-1
@@ -45,17 +43,14 @@ public class Constant extends Expression {
         return 20;
     }
 
-    public Object getSet() { 
-	return value.getSet(); 
-    }
-
-    public Member getValue() { return value; }
+    public double getValue() { return value; }
 
     public boolean equals(Object o) {
-	Object op;
-	if (o instanceof Constant) op=((Constant)o).getValue();
-	else op=o;
-	return (value.equals(op));
+	if (o instanceof Constant) {
+	    double op=((Constant)o).getValue();
+	    return (value == op);
+	}
+	else return false;
     }
 
 }

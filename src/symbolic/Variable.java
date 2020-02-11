@@ -1,73 +1,57 @@
-package JSci.maths.symbolic;
- 
-import JSci.maths.*;
-import JSci.maths.groups.*;
-import JSci.maths.fields.*;
-
-import java.util.*;
+package symbolic;
 
 /** Variables in an Expression. */
 public class Variable extends Expression {
 
     private final String name;
-    private final Object valueSet;
-    private Member value=null;
 
     /** 
      * @param n the name (symbol) of the variable
-     * @param valueSet the set to which the variable values belong,
-     * e.g. RealField.getInstance(). Note 
-     * it is not the Class of the values (odd thing indeed).
      */
-    public Variable(String n,Object valueSet) {
+    public Variable(String n) {
 	name=n;
-	this.valueSet=valueSet;
     }
-
-    public ArrayList<Variable> getVariables() { 
-	ArrayList<Variable> alv=new ArrayList<Variable>();
-	alv.add(this);
-	return alv; 
-    }
-
-    /** Set the value of the variable. 
-     * @param o the value; can be null to unset the variable
-     */
-    public void setValue(Member o) {
-	if (o==null) { value=null; return; }
-	if (valueSet.getClass().isInstance(o.getSet()))
-	    value=o;
-	else
-	    throw new ClassCastException("Variable "+this+" set to "+o.getSet()+" value ("+valueSet+" required.");
-    }
-
-    /** Get the value of the variable. 
-     * @return the value of the variable; null if the variable is unset.
-     */
-    public Member getValue() {
-	return value;
+    
+    public String [] getVariables() {
+	return new String [] {name};
     }
 
     public boolean equals(Object o) {
-	if (!(o instanceof Variable)) return false;
-	else return this==o;
+	if (o instanceof Variable) {
+	    String so=((Variable)o).name;
+	    if (so.equals(name)) 
+		return true;
+	}
+	if (o instanceof String) {
+	    String so=((String)o);
+	    if (so.equals(name))
+		return true;
+	}
+	return false;
     }
 
     public String toString() { return name; }
 
-    public Expression differentiate(Variable x) {
-	if (this.equals(x)) return new Constant(((Ring)valueSet).one());
-	else return new Constant(((AbelianGroup)valueSet).zero());
+    public Expression differentiate(String x) {
+	if (name.equals(x)) return new Constant(1.);
+	else return new Constant(0.);
+    }
+    
+    public double evaluate(String [] vs, double [] xs) {
+	int f=-10;
+	for (int j=0;j<vs.length;j++)
+	    if (vs[j].equals(name))
+		f=j;
+	if (f<0) throw new Error("Variable "+name+" is undefined");
+	return xs[f];
     }
 
-    public Expression evaluate() {
-	if (value==null) return this;
-	if (value instanceof Expression) return ((Expression)value).evaluate();
-	return new Constant(value);
+    public Expression substitute(String v, Expression e) {
+	if (v.equals(name)) 
+	    return e;
+	else return this;
     }
 
     protected int getPriority() {return 20;}
-
-    public Object getSet() { return (AbelianGroup)valueSet; }
 
 }
