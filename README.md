@@ -20,8 +20,6 @@ JLJP was originally written by **[Doriano Brogioli](https://sites.google.com/sit
 * Select "X" and "Last" as shown in the screenshot
 * Click "Calculate" and the liquid junction potential will be displayed
 
-A precompiled JAR file is also available: http://jljp.sourceforge.net/Jljp.jar
-
 ## Notes about Adding Ions
 
 * In the graphical panel put the name of the ion in the text field and press "Add"
