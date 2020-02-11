@@ -6,21 +6,21 @@ import java.awt.*;
 
 public class Jljp extends JFrame {
 
-	public Jljp() {
-		this.setTitle("JLJP by Doriano Brogioli (Version 2.0.1)");
-		setSize(900, 600);
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public Jljp() {
+        this.setTitle(String.format("JLJP by Doriano Brogioli (Version %s)", Version.getString()));
+        setSize(900, 600);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		LJPPanel ljpPanel = new LJPPanel(new IonSetPanel(), null);
-		ljpPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		getContentPane().add(ljpPanel, BorderLayout.PAGE_START);
-	}
+        LJPPanel ljpPanel = new LJPPanel(new IonSetPanel(), null);
+        ljpPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        getContentPane().add(ljpPanel, BorderLayout.PAGE_START);
+    }
 
-	public static void main(String[] args) {
-		Jljp j = new Jljp();
-		j.setVisible(true);
-	}
+    public static void main(String[] args) {
+        Jljp j = new Jljp();
+        j.setVisible(true);
+    }
 
 }
