@@ -14,7 +14,7 @@ JLJP was originally written by **[Doriano Brogioli](https://sites.google.com/sit
 * Install the [Java Platform (JDK)](https://www.oracle.com/technetwork/java/javase/downloads/)
 * Ensure Java's `bin` folder is in your system path ([instructions](https://www.java.com/en/download/help/path.xml))
 * Compile with `javac -nowarn Jljp.java`
-* Launch the GUI with `java Jljp.class`
+* Launch the GUI with `java Jljp`
 * Add ions (Zn, K, and Cl) as seen in the screenshot
 * Set concentrations (c0 and cL) for each ion
 * Select "X" and "Last" as shown in the screenshot
