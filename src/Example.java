@@ -81,7 +81,9 @@ public class Example {
 		isss.add(K);
 		isss.add(Cl);
 
-		System.err.println("Voltage: " + isss.calculate(System.out));
+        double ljpVolts = isss.calculate(null);
+        double ljpMillivolts = ljpVolts * 1000;
+		System.err.println(String.format("LJP = %f mV", ljpMillivolts));
 
 	}
 
