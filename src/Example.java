@@ -55,9 +55,9 @@ public class Example {
 		// Functions can be provided, written as strings. The
 		// name of the ions is the concentration in M.
 
-		Zn.setCdadc("-1.0+2.0/3.0*(atan((Zn-5.45776)*0.408978)*2.35004+3.0-atan(-5.45776*0.408978)*2.35004)");
-		K.setCdadc("1.0");
-		Cl.setCdadc("1.0/2.0+1.0/6.0*(atan((Zn-5.45776)*0.408978)*2.35004+3.0-atan(-5.45776*0.408978)*2.35004)");
+		//Zn.setCdadc("-1.0+2.0/3.0*(atan((Zn-5.45776)*0.408978)*2.35004+3.0-atan(-5.45776*0.408978)*2.35004)");
+		//K.setCdadc("1.0");
+		//Cl.setCdadc("1.0/2.0+1.0/6.0*(atan((Zn-5.45776)*0.408978)*2.35004+3.0-atan(-5.45776*0.408978)*2.35004)");
 
 		// We set the concentration in M at the beginning and end of
 		// the liquid junction.
