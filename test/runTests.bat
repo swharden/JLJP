@@ -3,10 +3,12 @@
 
 @echo off
 
-del *.class /f /q /s
+del *.class /f /q /s >nul 2>&1
 
 set CLASSPATH=%CLASSPATH%;junit-4.13.jar;hamcrest-core-1.3.jar;..\src
 
 javac CalculationTest.java
 
 if exist CalculationTest.class java org.junit.runner.JUnitCore CalculationTest
+
+del *.class /f /q /s >nul 2>&1
