@@ -6,7 +6,6 @@ import java.util.*;
 public class CalculationTest {
 
     private static final double mVperV = 1000.0;
-    private static final boolean printLog = false;
 
     @Test
     public void test_testingPlatform_newListIsEmpty() {
@@ -35,19 +34,15 @@ public class CalculationTest {
     public void test_ljpMath_exampleFromScreenshot() throws Exception {
         /* this test came from screenshot on JLJP website */
 
-        IonSet isss = new IonSet();
-        isss.add(new Ion("Zn", 9, 0.0284));
-        isss.add(new Ion("K", 0, 3)); // second from last is "X"
-        isss.add(new Ion("Cl", 18, 3.0568)); // last becomes "last"
+        IonSet ionSet = new IonSet();
+        ionSet.add(new Ion("Zn", 9, 0.0284));
+        ionSet.add(new Ion("K", 0, 3)); // second from last is "X"
+        ionSet.add(new Ion("Cl", 18, 3.0568)); // last becomes "last"
 
-        double ljp_V = isss.calculate(null);
-        double ljp_mV = ljp_V * mVperV;
-        if (printLog)
-            System.out.println(String.format("LJP = %f mV", ljp_mV));
-
+        double calculated_mV = ionSet.calculate(null) * 1000;
         double expected_mV = -20.82;
         double allowableDifference_mV = .01;
-        assertEquals(ljp_mV, expected_mV, allowableDifference_mV);
+        assertEquals(calculated_mV, expected_mV, allowableDifference_mV);
     }
 
     @Test
@@ -89,34 +84,129 @@ public class CalculationTest {
         ionSet.add(K); // second from last is "X"
         ionSet.add(Cl); // last becomes "last"
 
-        double ljp_V = ionSet.calculate(null);
-        double ljp_mV = ljp_V * mVperV;
-        if (printLog) {
-            System.out.println(ionSet.getDescription());
-            System.out.println(String.format("LJP = %f mV", ljp_mV));
-        }
-
+        double calculated_mV = ionSet.calculate(null) * 1000;
         double expected_mV = -16.65;
-        double allowableDifference_mV = 1;
-        assertEquals(ljp_mV, expected_mV, allowableDifference_mV);
+        double allowableDifference_mV = .5;
+        assertEquals(calculated_mV, expected_mV, allowableDifference_mV);
     }
 
-    // @Test // this is very slow to run
-    public void test_ljpMath_variance() throws Exception {
+    @Test
+    public void test_JLJPvsNgAndBarry_001() throws Exception {
+        /* Measured LJP for this test came from Ng and Barry (1994) Table 2 */
 
-        // repeatedly calculate LJP from the screenshot values
-        int repetitionCount = 10000;
-        for (int i = 0; i < repetitionCount; i++) {
+        // 50 mM NaCl : 50 mM KCl
+        IonSet ionSet = new IonSet();
+        ionSet.add(new Ion("Na", 50, 0));
+        ionSet.add(new Ion("K", 0, 50));
+        ionSet.add(new Ion("Cl", 50, 50));
 
-            IonSet isss = new IonSet();
-            isss.add(new Ion("Zn", 9, 0.0284));
-            isss.add(new Ion("K", 0, 3));
-            isss.add(new Ion("Cl", 18, 3.0568));
+        double calculated_mV = ionSet.calculate(null) * 1000;
+        double expected_mV = -4.3;
+        double allowableDifference_mV = .5;
+        assertEquals(calculated_mV, expected_mV, allowableDifference_mV);
+    }
 
-            double ljp_V = isss.calculate(null);
-            double ljp_mV = ljp_V * mVperV;
-            System.out.println(ljp_mV);
-        }
+    @Test
+    public void test_JLJPvsNgAndBarry_002() throws Exception {
+        /* Measured LJP for this test came from Ng and Barry (1994) Table 2 */
 
+        // 150 mM NaCl : 150 mM KCl
+        // Na (150), Cl (150) : K (150) Cl (150)
+        IonSet ionSet = new IonSet();
+        ionSet.add(new Ion("Na", 150, 0));
+        ionSet.add(new Ion("K", 0, 150));
+        ionSet.add(new Ion("Cl", 150, 150));
+
+        double calculated_mV = ionSet.calculate(null) * 1000;
+        double expected_mV = -4.3;
+        double allowableDifference_mV = .5;
+        assertEquals(calculated_mV, expected_mV, allowableDifference_mV);
+    }
+
+    @Test
+    public void test_JLJPvsNgAndBarry_003() throws Exception {
+        /* Measured LJP for this test came from Ng and Barry (1994) Table 2 */
+
+        // 50 NaCl : 50 CsCl
+        // Na (50), Cl (50) : Cs (50) Cl (50)
+        IonSet ionSet = new IonSet();
+        ionSet.add(new Ion("Na", 50, 0));
+        ionSet.add(new Ion("Cs", 0, 50));
+        ionSet.add(new Ion("Cl", 50, 50));
+
+        double calculated_mV = ionSet.calculate(null) * 1000;
+        double expected_mV = -4.9;
+        double allowableDifference_mV = 1.5;
+        assertEquals(calculated_mV, expected_mV, allowableDifference_mV);
+    }
+
+    @Test
+    public void test_JLJPvsNgAndBarry_004() throws Exception {
+        /* Measured LJP for this test came from Ng and Barry (1994) Table 2 */
+
+        // 100 NaCl : 100 MgCl2
+        // Na (100), Cl (100) : Mg (100) Cl (100)
+        IonSet ionSet = new IonSet();
+        ionSet.add(new Ion("Na", 100, 0));
+        ionSet.add(new Ion("Mg", 0, 100));
+        ionSet.add(new Ion("Cl", 100, 200));
+
+        double calculated_mV = ionSet.calculate(null) * 1000;
+        double expected_mV = +10.0;
+        double allowableDifference_mV = 1.5;
+        assertEquals(calculated_mV, expected_mV, allowableDifference_mV);
+    }
+
+    @Test
+    public void test_JLJPvsNgAndBarry_005() throws Exception {
+        /* Measured LJP for this test came from Ng and Barry (1994) Table 2 */
+
+        // 100 CaCl2 : 100 MgCl2
+        // Ca (100), Cl (200) : Mg (100) Cl (200)
+        IonSet ionSet = new IonSet();
+        ionSet.add(new Ion("Ca", 100, 0));
+        ionSet.add(new Ion("Mg", 0, 100));
+        ionSet.add(new Ion("Cl", 200, 200));
+
+        double calculated_mV = ionSet.calculate(null) * 1000;
+        double expected_mV = +0.6;
+        double allowableDifference_mV = 1.5;
+        assertEquals(calculated_mV, expected_mV, allowableDifference_mV);
+    }
+
+    @Test
+    public void test_JLJPvsNgAndBarry_006() throws Exception {
+        /* Measured LJP for this test came from Ng and Barry (1994) Table 2 */
+
+        // 100 KCl + 2 CaCl2 : 100 LiCl + 2 CaCl2
+        // K (100), Cl (104), Ca (2) : Li (100), Cl (104), Ca (2)
+        IonSet ionSet = new IonSet();
+        ionSet.add(new Ion("Ca", 2, 2));
+        ionSet.add(new Ion("K", 100, 0));
+        ionSet.add(new Ion("Li", 0, 100));
+        ionSet.add(new Ion("Cl", 104, 104));
+
+        double calculated_mV = ionSet.calculate(null) * 1000;
+        double expected_mV = +6.4;
+        double allowableDifference_mV = 1.5;
+        assertEquals(calculated_mV, expected_mV, allowableDifference_mV);
+    }
+
+    @Test
+    public void test_JLJPvsNgAndBarry_007() throws Exception {
+        /* Measured LJP for this test came from Ng and Barry (1994) Table 2 */
+
+        // 50 CaCl2 + 50 MgCl2 : 100 LiCl
+        // Ca (50), Cl (200), Mg (50) : Li (100), Cl (100)
+        IonSet ionSet = new IonSet();
+        ionSet.add(new Ion("Ca", 50, 0));
+        ionSet.add(new Ion("Cl", 200, 100));
+        ionSet.add(new Ion("Mg", 50, 0));
+        ionSet.add(new Ion("Li", 0, 100));
+
+        double calculated_mV = ionSet.calculate(null) * 1000;
+        double expected_mV = -8.2;
+        double allowableDifference_mV = 1.5;
+        assertEquals(calculated_mV, expected_mV, allowableDifference_mV);
     }
 }
