@@ -209,4 +209,40 @@ public class CalculationTest {
         double allowableDifference_mV = 1.5;
         assertEquals(calculated_mV, expected_mV, allowableDifference_mV);
     }
+
+    @Test
+    public void test_JPWin_1() throws Exception {
+        // ion set shown in JPCalcWin manual (page 7)
+        // https://tinyurl.com/wk7otn7
+
+        IonSet ionSet = new IonSet();
+        ionSet.add(new Ion("Na", 10, 145));
+        ionSet.add(new Ion("Cl", 10, 145));
+        ionSet.add(new Ion("Cs", 135, 0));
+        ionSet.add(new Ion("F", 135, 0));
+
+        double calculated_mV = ionSet.calculate(null) * 1000;
+        double expected_mV = +8.74;
+        double allowableDifference_mV = 1;
+        assertEquals(calculated_mV, expected_mV, allowableDifference_mV);
+
+    }
+
+    @Test
+    public void test_JPWin_2() throws Exception {
+        // ion set shown in JPCalcWin manual (page 10)
+        // https://tinyurl.com/wk7otn7
+
+        IonSet ionSet = new IonSet();
+        ionSet.add(new Ion("Cs", 145, 0));
+        ionSet.add(new Ion("Na", 0, 145));
+        ionSet.add(new Ion("F", 125, 0));
+        ionSet.add(new Ion("Cl", 20, 145));
+
+        double calculated_mV = ionSet.calculate(null) * 1000;
+        double expected_mV = +8.71;
+        double allowableDifference_mV = 1;
+        assertEquals(calculated_mV, expected_mV, allowableDifference_mV);
+
+    }
 }
