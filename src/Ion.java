@@ -6,26 +6,29 @@
 public class Ion {
 
 	public static final double zeroCinK = 273.15;
-	public static final double temperatureC = 25.0; // TODO: let user set this
+	public static final double temperatureC = 25.0;
 
 	// Boltzmann constant = 1.38064852e-23 (m^2 * kg) / (s^2 * K)
 	public static final double boltzmann = 1.3806488e-23;
 	public static final double KT = boltzmann * (temperatureC + zeroCinK);
 
 	// Elementary charge = 1.602176634×10−19 (cm * g * s)
-	public static final double e = 1.6e-19; // TODO: use more precision
+	public static final double e = 1.6e-19;
 
 	// Avogadro constant = 6.02214076e23 (no units)
-	public static final double Nav = 6.02e23; // TODO: use more precision
+	public static final double Nav = 6.02e23;
 
 	// Vacuum permittivity = 8.8541878128e-12 (F / m)
-	public static final double epsilon = 8.854187817e-12 * 80.1;
-	// What is the 80.1? It may not matter because epsilon is never used
+	public static final double vacPerm = 8.854187817e-12 * 80.1;
+	public static final double epsilon = vacPerm * 80.1; // what is 80.1?
 
-	private String name;
-	private int charge;
-	private double mu, phi, c0, cL;
-	private String cdadc;
+	private String name = "?";
+	private int charge = 0;
+	private double mu = Double.NaN;
+	private double phi = 0;
+	private double c0 = 0;
+	private double cL = 0;
+	private String cdadc = "1.0";
 
 	/**
 	 * Create an Ion with the given name. Please write the name as "Na", "K", "Cl"
@@ -37,8 +40,6 @@ public class Ion {
 	 */
 	public Ion(String n, double c0, double cL) {
 		name = n;
-		cdadc = "1.0";
-		phi = 0.0;
 		this.c0 = c0;
 		this.cL = cL;
 		updateMuAndChargeFromTable();
@@ -46,21 +47,16 @@ public class Ion {
 
 	public Ion(String n) {
 		name = n;
-		charge = 1;
-		cdadc = "1.0";
-		phi = 0.0;
-		c0 = 0.0;
-		cL = 0.0;
-		mu = 73.48e-4 / Nav / e / e; // TODO: why is this the default?
 		updateMuAndChargeFromTable();
 	}
 
 	private void updateMuAndChargeFromTable() {
 
-	    /* Values of mobility are calculated from diffusion coefficients
-	       taken from:
-	       CRC Handbook of Chemistry and Physics, CRC press, 2015 */
-	    
+		/*
+		 * Values of mobility are calculated from diffusion coefficients taken from: CRC
+		 * Handbook of Chemistry and Physics, CRC press, 2015
+		 */
+
 		if (name.equalsIgnoreCase("Ag")) {
 			charge = +1;
 			mu = 4.01656e+11;
@@ -586,7 +582,7 @@ public class Ion {
 		msg += String.format("charge: %d, ", charge);
 		msg += String.format("mu: %f, ", mu);
 		msg += String.format("cdadc: %s", cdadc);
-		return(msg);
+		return (msg);
 	}
 
 	/**
