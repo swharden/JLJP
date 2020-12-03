@@ -40,6 +40,8 @@ _Note 2: The values of c0 and cL for the ion "last" is ignored and calculated fr
 
 ## Resources
 
+* [LJPcalc](https://github.com/swharden/LJPcalc) is a C# port of this application
+
 * View the [JLJP Java API](http://jljp.sourceforge.net/doc/index.html) on SourceForge
 
 * The package can be used both as single classes ([Example.java](src/Example.java)) or a graphical interface ([Jljp.class](src/Jljp.java)).
