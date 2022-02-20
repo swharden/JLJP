@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: "11"
+          distribution: "temurin"
+          cache: "maven"
+      - name: 🧐 Validate
+        run: mvn --batch-mode --no-transfer-progress validate
+      - name: 🛠️ Compile
+        run: mvn --batch-mode --no-transfer-progress compile
+      - name: 🧪 Test
+        run: mvn --batch-mode --no-transfer-progress test
+      - name: 📦 Package
+        run: mvn --batch-mode --no-transfer-progress package
