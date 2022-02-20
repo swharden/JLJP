@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/swharden/JLJP/actions/workflows/ci.yaml/badge.svg)](https://github.com/swharden/JLJP/actions/workflows/ci.yaml)
 
-**JLJP is a Java application which calculates liquid junction potential (LJP) for two solutions.** JLJP supports an arbitrary number of ions and also allows the user to define ion activity as a function of concentration. See [Marino et al., 2014](https://arxiv.org/abs/1403.3640) for a detailed explanation of the calculation methods employed by this software.
+**JLJP is a Java application which calculates liquid junction potential (LJP) for two solutions with an arbitrary number of ions.** Unlike other LJP calculators, JLJP allows the user to define ion activity as a function of concentration. See [Marino et al., 2014](https://arxiv.org/abs/1403.3640) for a detailed explanation of the calculation methods employed by this software.
 
 ![](dev/screenshots/3.JPG)
 
