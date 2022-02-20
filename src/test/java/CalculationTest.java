@@ -1,17 +1,8 @@
-import org.junit.*;
-import static org.junit.Assert.*;
-
-import java.util.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class CalculationTest {
-
-    private static final double mVperV = 1000.0;
-
-    @Test
-    public void test_testingPlatform_newListIsEmpty() {
-        Collection collection = new ArrayList();
-        assertTrue(collection.isEmpty());
-    }
 
     @Test
     public void test_ion_nameLookupWorks() {
