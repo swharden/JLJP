@@ -171,6 +171,7 @@ public class IonSet {
     private double givenPhi(PrintStream pst, double[] phis, double[] cLs, String[] vars, Expression[] eCdadc)
 	throws Exception {
 
+	// TODO: throw exceptions or something - these fail often! Assertions must be disabled in tests!
 	assert phis.length != list.size() - 2;
 	assert cLs.length != list.size() - 2;
 
